@@ -46,15 +46,50 @@ class Zcl extends BaseClass{
   }
 
   clearScreen( color= 'rgba(47,79,79,1)' ){
-    this.cvs.save();
-    this.cvs.fillStyle = color;
-    this.cvs.fillRect( 
+    var icvs = this.cvs;
+    
+    icvs.save();
+    icvs.fillStyle = color;
+    icvs.fillRect( 
       0,
       0, 
-      this.candom.width, 
+      this.candom.width,
       this.candom.height );
-    
-    this.cvs.restore(); 
+
+    icvs.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    icvs.lineWidth = 0.8;
+    icvs.setLineDash( [ 6, 2, 6, 2] );
+    icvs.lineDashOffset = 2;
+
+    var pixSizeX = 20;
+    var pixSizeY = 20;
+    var numberX = this.candom.height / pixSizeX;
+    var numberY = this.candom.width / pixSizeY;
+
+    for( var i = 0; i< numberX; i++ ){
+      if( i % 3 == 0 )
+        icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
+      else
+        icvs.strokeStyle = "rgba(255, 255, 255, 0.2)";
+      icvs.beginPath();
+      icvs.moveTo(0 + 0.5, i * pixSizeX + 0.5);
+      icvs.lineTo(this.candom.width  + 0.5, i * pixSizeX  + 0.5);
+      icvs.stroke();
+    }
+
+    for( var i = 0; i< numberY; i++ ){
+      if( i % 3 == 0 )
+        icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
+      else
+        icvs.strokeStyle = "rgba(255, 255, 255, 0.2)";
+
+      icvs.beginPath();
+      icvs.moveTo( i * pixSizeY + 0.5, 0);
+      icvs.lineTo(i * pixSizeY + 0.5, this.candom.height  + 0.5);
+      icvs.stroke();
+    }
+
+    icvs.restore(); 
   }
 
   start(){
@@ -117,7 +152,7 @@ class Zclm extends BaseClass{
   }
 
 
-  
+
 }
 
 

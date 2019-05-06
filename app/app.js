@@ -1,12 +1,12 @@
 
 let zcl = new Zcl("#can");
-let re = new Rectangle( {_x:0,_y:0},{_x:20,_y:20} );
+let re = new Rectangle( {_x: 20, _y: 20},{_x: 100,_y: 100} );
 re.on( "click" , function (e){
-  console.log(123);
+  console.log(`${e.type}:${e.offsetX},${e.offsetY}`);
 })
 
 re.on("mousemove", (e)=>{
-  console.log(`${e.type}:${e.offsetX},${e.offsetY}`);
+  
 });
 
 zcl.add(re);

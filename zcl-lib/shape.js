@@ -10,6 +10,24 @@ class Point{
     this._x = x;
     this._y = y;
   }
+
+  /**
+   * @param {{ _x: any; _y: any; }} p
+   */
+  set value (p){
+    if( p instanceof Point ){
+      this._x = p._x;
+      this._y = p._y;
+    }
+  }
+
+  sub(p){
+    return new Point( this._x - p._x, this._y - p._y );
+  }
+
+  add(p){
+    return new Point( this._x + p._x, this._y + p._y );
+  }
 }
 
 class Size{
@@ -29,16 +47,18 @@ class Shape extends BaseClass{
 
     this.clicking = false;
 
+    this.clickPoint = new Point();
   }
 
   onmousedown(e){
     this.clicking = true;
+    this.clickPoint.value = new Point(e.offsetX, e.offsetY).sub(this._p1);
   }
 
   onmousemove(e){
 
     if( this.clicking ){
-      this.move( new Point( e.x, e.y ) );
+      this.move( new Point( e.offsetX, e.offsetY ).sub( this.clickPoint.add(this._p1) ) );
       this.dragging = true;
     }else{
       this.dragging = false;
@@ -47,6 +67,7 @@ class Shape extends BaseClass{
 
   onmouseup(e){
     this.clicking = false;
+    this.clickPoint = new Point();
   }
 
   //Interface
@@ -79,7 +100,7 @@ class Rectangle extends Shape{
   draw(ctx){
     ctx.save();
 
-    ctx.fillStyle='rgb(255,0,0)';
+    ctx.fillStyle='rgba(255, 0, 0, 0.8)';
 
     ctx.fillRect(
       this._p1._x,
@@ -92,11 +113,16 @@ class Rectangle extends Shape{
 
   isHover( point ){
     if( point._x >= this._p1._x &&
-      point._x <= this._p2._x &&
+      point._x <= this._p1._x + this._p2._x &&
       point._y >= this._p1._y &&
-      point._y <= this._p2._y )
+      point._y <= this._p1._y + this._p2._y )
       return true;
     return false;
+  }
+
+  move( p ){
+    this._p1._x += p._x;
+    this._p1._y += p._y;
   }
 
 }
