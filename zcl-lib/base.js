@@ -1,18 +1,34 @@
-class Zcl{
+
+class Zcl extends BaseClass{
   constructor(params) {
+    super();
+
     this.candom = document.querySelector(params);
     this.cvs = this.candom.getContext('2d');
 
+    this.modules = new Zclm();
+
     this.init();
+  }
+
+  add( m ){
+    if( !( m instanceof Shape ) )
+      return ;
+
+    this.modules.add(m);
+
   }
 
   init(){
 
     for (const eventname of EventNamesMouse) {
       this.candom.addEventListener(eventname, ( e ) => {
-        // TODO
-
-
+        // 当前类事件
+        if( this[ `on${eventname}` ] ){
+          this[ `on${eventname}` ].call(this, e);
+        }
+        // 事件分发到模型
+        this.modules.trigger( eventname, e);
       });
     }
 
@@ -23,7 +39,9 @@ class Zcl{
 
       });
     }
+  }
 
+  onclick(e){
 
   }
 
@@ -49,7 +67,11 @@ class Zcl{
 
     this.clearScreen("rgba(40, 120, 255, 1)");
 
-
+    for (const m of this.modules._modules) {
+      if( (m instanceof Shape)&&(m.draw) ){
+        m.draw(this.cvs);
+      }
+    }
 
     window.requestAnimationFrame( () => {
       this.frame();
@@ -57,3 +79,70 @@ class Zcl{
   }
 
 }
+
+class Zclm extends BaseClass{
+  constructor(){
+    super();
+
+    this._modules = [];
+
+    this._makeEvent();
+  }
+
+  add( m ){
+
+    if( !( m instanceof Shape ) )
+      return ;
+
+    this._modules.push(m);
+
+  }
+
+  onclick( e ){
+    // console.log(`${e.type}:${e.offsetX},${e.offsetY}`);
+  }
+
+  _makeEvent(){
+    for (const en of EventNamesMouse) {
+      this.on( en, (e) =>{
+        let cp = new Point( e.offsetX, e.offsetY );
+        for (const m of this._modules) {
+          if( m.isHover && m.isHover( cp )){
+            m.trigger( en , e);
+          }
+        }
+      });
+    }
+
+  }
+
+
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
