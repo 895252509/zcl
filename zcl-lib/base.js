@@ -139,6 +139,20 @@ class Zclm extends BaseClass{
 
   _makeEvent(){
     for (const en of EventNamesMouse) {
+      if( en === "mousemove" ){
+        this.on( en, (e) =>{
+          let cp = new Point( e.offsetX, e.offsetY );
+          for (const m of this._modules) {
+            if( m.isHover && m.isHover( cp ) ){
+              m.trigger( en , e);
+            }else if( m.isHover && !m.isHover( cp ) && ( m instanceof Shape )){
+              m.clicking = false;
+              m.clickPoint = new Point();
+            }
+          }
+        });
+      }
+
       this.on( en, (e) =>{
         let cp = new Point( e.offsetX, e.offsetY );
         for (const m of this._modules) {

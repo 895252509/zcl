@@ -28,6 +28,15 @@ class Point{
   add(p){
     return new Point( this._x + p._x, this._y + p._y );
   }
+
+  getDistance(p){
+    return suport.getDistance( this._x, this._y, p._x, p._y ).toFixed(3);
+  }
+
+  set value(p){
+    this._x = p._x;
+    this._y = p._y;
+  }
 }
 
 class Size{
@@ -51,8 +60,14 @@ class Shape extends BaseClass{
   }
 
   onmousedown(e){
-    this.clicking = true;
-    this.clickPoint.value = new Point(e.offsetX, e.offsetY).sub(this._p1);
+    if( e.button === 0 ){ //left button
+      this.clicking = true;
+      this.clickPoint.value = new Point(e.offsetX, e.offsetY).sub(this._p1);  
+    }else if( e.button === 1 ){ //middle button
+
+    }else if( e.button === 2 ){ //right button
+
+    }
   }
 
   onmousemove(e){
@@ -66,8 +81,15 @@ class Shape extends BaseClass{
   }
 
   onmouseup(e){
-    this.clicking = false;
-    this.clickPoint = new Point();
+
+    if( e.button === 0 ){ //left button
+      this.clicking = false;
+      this.clickPoint = new Point();
+    }else if( e.button === 1 ){ //middle button
+
+    }else if( e.button === 2 ){ //right button
+
+    }
   }
 
   //Interface
@@ -89,8 +111,8 @@ class Rectangle extends Shape{
   constructor(p1= new Point(), p2= new Point()){
     super();
 
-    this._p1 = p1;
-    this._p2 = p2;
+    this._p1 = new Point(p1);
+    this._p2 = new Point(p2);
 
     this.figure;
 
@@ -121,8 +143,42 @@ class Rectangle extends Shape{
   }
 
   move( p ){
-    this._p1._x += p._x;
-    this._p1._y += p._y;
+    this._p1.value = this._p1.add(p);
+  }
+
+}
+
+class Circle extends Shape{
+  constructor( p1 = new Point(), r = 0){
+    super();
+
+    this._p1 = p1;
+
+    this._r = r;
+
+  }
+
+  draw(ctx){
+    ctx.save();
+
+    ctx.fillStyle='rgba(255, 0, 0, 0.8)';
+    
+    ctx.beginPath();
+    ctx.arc( this._p1._x, this._p1._y, this._r, 
+      0, Math.PI*2, 1);
+
+    ctx.stroke();
+  
+    ctx.restore();
+  }
+
+  isHover( point ){
+    if( Math.abs(this._p1.getDistance( point ) - this._r) <= 2.5 ) return true;
+    return false;
+  }
+
+  move( p ){
+    this._p1.value = this._p1.add(p);
   }
 
 }
