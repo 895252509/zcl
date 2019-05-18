@@ -6,7 +6,7 @@ class Zcl extends BaseClass{
     this.candom = document.querySelector(params);
     this.cvs = this.candom.getContext('2d');
 
-    this.modules = new Zclm();
+    this.modules = new Zclm( this );
 
     this.init();
   }
@@ -29,6 +29,7 @@ class Zcl extends BaseClass{
         }
         // 事件分发到模型
         this.modules.trigger( eventname, e);
+
       });
     }
 
@@ -116,10 +117,12 @@ class Zcl extends BaseClass{
 }
 
 class Zclm extends BaseClass{
-  constructor(){
+  constructor(zcl){
     super();
 
     this._modules = [];
+
+    this.zcl = zcl;
 
     this._makeEvent();
   }
@@ -142,12 +145,17 @@ class Zclm extends BaseClass{
       if( en === "mousemove" ){
         this.on( en, (e) =>{
           let cp = new Point( e.offsetX, e.offsetY );
+          let is = false;
           for (const m of this._modules) {
             if( m.isHover && m.isHover( cp ) ){
+              this.zcl.candom.style.cursor = "pointer";
+              is = true;
               m.trigger( en , e);
             }else if( m.isHover && !m.isHover( cp ) && ( m instanceof Shape )){
               m.clicking = false;
               m.clickPoint = new Point();
+
+              if( !is ) this.zcl.candom.style.cursor = "auto";
             }
           }
         });
@@ -162,7 +170,6 @@ class Zclm extends BaseClass{
         }
       });
     }
-
   }
 
 

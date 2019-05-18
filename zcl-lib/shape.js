@@ -1,10 +1,10 @@
-class Point{
-  constructor( x= 0, y= 0 ){
-    if( x instanceof Point ){
+class Point {
+  constructor(x = 0, y = 0) {
+    if (x instanceof Point) {
       this._x = x._x;
       this._y = x._y;
 
-      return ;
+      return;
     }
 
     this._x = x;
@@ -14,40 +14,40 @@ class Point{
   /**
    * @param {{ _x: any; _y: any; }} p
    */
-  set value (p){
-    if( p instanceof Point ){
+  set value(p) {
+    if (p instanceof Point) {
       this._x = p._x;
       this._y = p._y;
     }
   }
 
-  sub(p){
-    return new Point( this._x - p._x, this._y - p._y );
+  sub(p) {
+    return new Point(this._x - p._x, this._y - p._y);
   }
 
-  add(p){
-    return new Point( this._x + p._x, this._y + p._y );
+  add(p) {
+    return new Point(this._x + p._x, this._y + p._y);
   }
 
-  getDistance(p){
-    return suport.getDistance( this._x, this._y, p._x, p._y ).toFixed(3);
+  getDistance(p) {
+    return suport.getDistance(this._x, this._y, p._x, p._y).toFixed(3);
   }
 
-  set value(p){
+  set value(p) {
     this._x = p._x;
     this._y = p._y;
   }
 }
 
-class Size{
-  constructor( w= 0, h= 0){
+class Size {
+  constructor(w = 0, h = 0) {
     this._w = w;
     this._h = h;
   }
 }
 
-class Shape extends BaseClass{
-  constructor(){
+class Shape extends BaseClass {
+  constructor() {
     super();
 
     this.dragable = true;
@@ -59,47 +59,47 @@ class Shape extends BaseClass{
     this.clickPoint = new Point();
   }
 
-  onmousedown(e){
-    if( e.button === 0 ){ //left button
+  onmousedown(e) {
+    if (e.button === 0) { //left button
       this.clicking = true;
-      this.clickPoint.value = new Point(e.offsetX, e.offsetY).sub(this._p1);  
-    }else if( e.button === 1 ){ //middle button
+      this.clickPoint.value = new Point(e.offsetX, e.offsetY).sub(this._p1);
+    } else if (e.button === 1) { //middle button
 
-    }else if( e.button === 2 ){ //right button
+    } else if (e.button === 2) { //right button
 
     }
   }
 
-  onmousemove(e){
+  onmousemove(e) {
 
-    if( this.clicking ){
-      this.move( new Point( e.offsetX, e.offsetY ).sub( this.clickPoint.add(this._p1) ) );
+    if (this.clicking) {
+      this.move(new Point(e.offsetX, e.offsetY).sub(this.clickPoint.add(this._p1)));
       this.dragging = true;
-    }else{
+    } else {
       this.dragging = false;
     }
   }
 
-  onmouseup(e){
+  onmouseup(e) {
 
-    if( e.button === 0 ){ //left button
+    if (e.button === 0) { //left button
       this.clicking = false;
       this.clickPoint = new Point();
-    }else if( e.button === 1 ){ //middle button
+    } else if (e.button === 1) { //middle button
 
-    }else if( e.button === 2 ){ //right button
+    } else if (e.button === 2) { //right button
 
     }
   }
 
   //Interface
-  draw(){
+  draw() {
 
 
   }
 
   //Interface
-  isHover(){
+  isHover() {
 
 
 
@@ -107,8 +107,8 @@ class Shape extends BaseClass{
 }
 
 
-class Rectangle extends Shape{
-  constructor(p1= new Point(), p2= new Point()){
+class Rectangle extends Shape {
+  constructor(p1 = new Point(), p2 = new Point()) {
     super();
 
     this._p1 = new Point(p1);
@@ -119,37 +119,32 @@ class Rectangle extends Shape{
     this.style;
   }
 
-  draw(ctx){
+  draw(ctx) {
     ctx.save();
 
-    ctx.fillStyle='rgba(255, 0, 0, 0.8)';
+    ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
 
     ctx.fillRect(
       this._p1._x,
       this._p1._y,
       this._p2._x,
       this._p2._y);
-  
+
     ctx.restore();
   }
 
-  isHover( point ){
-    if( point._x >= this._p1._x &&
-      point._x <= this._p1._x + this._p2._x &&
-      point._y >= this._p1._y &&
-      point._y <= this._p1._y + this._p2._y )
-      return true;
-    return false;
+  isHover(point) {
+    return suport.cclPointInRect(point._x, point._y, this._p1._x, this._p1._y, this._p1._x + this._p2._x, this._p1._y + this._p2._y);
   }
 
-  move( p ){
+  move(p) {
     this._p1.value = this._p1.add(p);
   }
 
 }
 
-class Circle extends Shape{
-  constructor( p1 = new Point(), r = 0){
+class Circle extends Shape {
+  constructor(p1 = new Point(), r = 0) {
     super();
 
     this._p1 = p1;
@@ -158,27 +153,68 @@ class Circle extends Shape{
 
   }
 
-  draw(ctx){
+  draw(ctx) {
     ctx.save();
 
-    ctx.fillStyle='rgba(255, 0, 0, 0.8)';
-    
+    ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
+
     ctx.beginPath();
-    ctx.arc( this._p1._x, this._p1._y, this._r, 
-      0, Math.PI*2, 1);
+    ctx.arc(this._p1._x, this._p1._y, this._r,
+      0, Math.PI * 2, 1);
 
     ctx.stroke();
-  
+
     ctx.restore();
   }
 
-  isHover( point ){
-    if( Math.abs(this._p1.getDistance( point ) - this._r) <= 2.5 ) return true;
+  isHover(point) {
+    if (Math.abs(this._p1.getDistance(point) - this._r) <= 2.5) return true;
     return false;
   }
 
-  move( p ){
+  move(p) {
     this._p1.value = this._p1.add(p);
   }
+
+}
+
+class Line extends Shape {
+  constructor(p1 = new Point(), p2 = new Point()) {
+    super();
+
+    //直线起点
+    this._p1 = p1;
+    //直线终点
+    this._p2 = p2;
+
+
+  }
+
+  draw(ctx) {
+    ctx.save();
+
+    ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+
+    ctx.beginPath();
+    ctx.moveTo(this._p1._x, this._p1._y);
+    ctx.lineTo(this._p2._x, this._p2._y);
+    ctx.stroke();
+
+    ctx.restore();
+
+  }
+
+  isHover(p) {
+    return (Math.abs(suport.cclCrossProduct(
+        this._p1._x, this._p1._y, this._p2._x, this._p2._y, p._x, p._y)) < 0.1) &&
+      suport.cclPointInRect(p._x, p._y, this._p1._x, this._p1._y, this._p2._x, this._p2._y);
+  }
+
+  move(p) {
+
+  }
+
+
+
 
 }
