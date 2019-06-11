@@ -147,11 +147,11 @@ class Zclm extends BaseClass{
           let cp = new Point( e.offsetX, e.offsetY );
           let is = false;
           for (const m of this._modules) {
-            if( m.isHover && m.isHover( cp ) ){
+            if( m.contain && m.contain( cp ) ){
               this.zcl.candom.style.cursor = "pointer";
               is = true;
               m.trigger( en , e);
-            }else if( m.isHover && !m.isHover( cp ) && ( m instanceof Shape )){
+            }else if( m.contain && !m.contain( cp ) && ( m instanceof Shape )){
               m.clicking = false;
               m.clickPoint = new Point();
 
@@ -164,7 +164,7 @@ class Zclm extends BaseClass{
       this.on( en, (e) =>{
         let cp = new Point( e.offsetX, e.offsetY );
         for (const m of this._modules) {
-          if( m.isHover && m.isHover( cp )){
+          if( m.contain && m.contain( cp )){
             m.trigger( en , e);
           }
         }

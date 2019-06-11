@@ -14,14 +14,17 @@ c.on("click", (e) => {
   console.log(`${e.type}:${e.offsetX},${e.offsetY}`);
 })
 
-let l = new Line(new Point(10, 50), new Point(200, 500));
-l.on("mousemove", (e) => {
+let l3 = new Line(new Point(100, 100), new Point(260, 200));
+l3.on("mousemove", (e) => {
   console.log(`${e.type}:${e.offsetX},${e.offsetY}`);
 })
 
 zcl.add(re);
 zcl.add(c);
-zcl.add(l);
+
+zcl.add(l3);
+zcl.add(l3.getBoundingBox())
+
 
 zcl.start();
 

@@ -37,4 +37,17 @@ class suport {
   static cclPointInRect(px, py, x1, y1, x2, y2) {
     return px > x1 && px < x2 && py > y1 && py < y2;
   }
+
+  //计算两点的斜率
+  static cclSlope(x1, y1, x2, y2){
+    return ( Number.isFinite((y2 - y1)/(x2 - x1))? (y2 - y1)/(x2 - x1) : 0 ).toFixed(3);
+  }
+
+  //dcmp 
+  static dcmp(x){
+    let eps = 0.1;
+    if( Math.abs(x) < eps ) return 0;
+    else
+      return x < 0? -1 : 1;
+  }
 }

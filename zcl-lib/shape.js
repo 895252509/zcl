@@ -29,6 +29,14 @@ class Point {
     return new Point(this._x + p._x, this._y + p._y);
   }
 
+  dot(p){
+    return (this._x * p._x + this._y * p._y).toFixed(3);
+  }
+
+  cross(p){
+    return (this._x * p._y - p._x * this._y).toFixed(3); 
+  }
+
   getDistance(p) {
     return suport.getDistance(this._x, this._y, p._x, p._y).toFixed(3);
   }
@@ -99,13 +107,53 @@ class Shape extends BaseClass {
   }
 
   //Interface
-  isHover() {
+  contain() {
 
 
 
   }
 }
 
+class Quadrilateral extends Shape{
+  constructor(
+    p1 = new Point(),
+    p2 = new Point(),
+    p3 = new Point(),
+    p4 = new Point() ){
+    super();
+    
+    this._p1 = p1;
+    this._p2 = p2;
+    this._p3 = p3;
+    this._p4 = p4;
+  }
+
+  contain(p){
+
+
+    return false;
+  }
+
+  draw(ctx){
+    let correct = 0.5;
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
+    ctx.setLineDash([4, 2]);
+
+    ctx.beginPath();
+    ctx.moveTo(this._p1._x - correct, this._p1._y );
+    ctx.lineTo(this._p2._x - correct, this._p2._y );
+    ctx.lineTo(this._p3._x - correct, this._p3._y );
+    ctx.lineTo(this._p4._x - correct, this._p4._y );
+    ctx.closePath();
+
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+}
 
 class Rectangle extends Shape {
   constructor(p1 = new Point(), p2 = new Point()) {
@@ -133,7 +181,7 @@ class Rectangle extends Shape {
     ctx.restore();
   }
 
-  isHover(point) {
+  contain(point) {
     return suport.cclPointInRect(point._x, point._y, this._p1._x, this._p1._y, this._p1._x + this._p2._x, this._p1._y + this._p2._y);
   }
 
@@ -167,7 +215,7 @@ class Circle extends Shape {
     ctx.restore();
   }
 
-  isHover(point) {
+  contain(point) {
     if (Math.abs(this._p1.getDistance(point) - this._r) <= 2.5) return true;
     return false;
   }
@@ -191,30 +239,52 @@ class Line extends Shape {
   }
 
   draw(ctx) {
-    ctx.save();
+    let correct = 0.5;
 
+    ctx.save();
     ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
 
     ctx.beginPath();
-    ctx.moveTo(this._p1._x, this._p1._y);
-    ctx.lineTo(this._p2._x, this._p2._y);
+    ctx.moveTo(this._p1._x - correct, this._p1._y );
+    ctx.lineTo(this._p2._x - correct, this._p2._y );
     ctx.stroke();
 
     ctx.restore();
 
   }
 
-  isHover(p) {
-    return (Math.abs(suport.cclCrossProduct(
-        this._p1._x, this._p1._y, this._p2._x, this._p2._y, p._x, p._y)) < 0.1) &&
-      suport.cclPointInRect(p._x, p._y, this._p1._x, this._p1._y, this._p2._x, this._p2._y);
+  onsegment(p){
+    return suport.dcmp(this._p1.sub(p).cross(this._p2.sub(p))) == 0 
+      && suport.dcmp(this._p1.sub(p).dot(this._p2.sub(p))) <= 0;
+  }
+
+  contain(p) {
+    return suport.dcmp(this._p1.sub(p).cross(this._p2.sub(p))) == 0 
+      && suport.dcmp(this._p1.sub(p).dot(this._p2.sub(p))) <= 0;
   }
 
   move(p) {
 
   }
 
-
-
+  getBoundingBox(){
+    let x = 5;
+    let slope = Math.abs(suport.cclSlope( this._p2._x,this._p2._y,this._p1._x,this._p1._y ));
+    if( slope >= 1 || slope == 0){
+      return new Quadrilateral( 
+        new Point( this._p1._x + x, this._p1._y ),
+        new Point( this._p2._x + x, this._p2._y ),
+        new Point( this._p2._x - x, this._p2._y ),
+        new Point( this._p1._x - x, this._p1._y )
+        );
+    }else{
+      return new Quadrilateral( 
+        new Point( this._p1._x, this._p1._y + x),
+        new Point( this._p2._x, this._p2._y + x),
+        new Point( this._p2._x, this._p2._y - x),
+        new Point( this._p1._x, this._p1._y - x)
+       );
+    }
+  }
 
 }
