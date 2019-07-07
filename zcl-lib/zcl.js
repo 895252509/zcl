@@ -1,40 +1,40 @@
 
-class Zcl extends Eventable{
+class Zcl extends Eventable {
   constructor(params) {
     super();
 
     this.candom = document.querySelector(params);
     this.cvs = this.candom.getContext('2d');
 
-    this.modules = new Zclm( this );
+    this.modules = new Zclm(this);
 
     this.init();
   }
 
-  add( m ){
-    if( !( m instanceof Showable ) )
-      return ;
+  add(m) {
+    if (!(m instanceof Showable))
+      return;
 
     this.modules.add(m);
 
   }
 
-  init(){
+  init() {
 
     for (const eventname of EventNamesMouse) {
-      this.candom.addEventListener(eventname, ( e ) => {
+      this.candom.addEventListener(eventname, (e) => {
         // 当前类事件
-        if( this[ `on${eventname}` ] ){
-          this[ `on${eventname}` ].call(this, e);
+        if (this[`on${eventname}`]) {
+          this[`on${eventname}`].call(this, e);
         }
         // 事件分发到模型
-        this.modules.trigger( eventname, e);
+        this.modules.trigger(eventname, e);
 
       });
     }
 
     for (const eventname of EventNamesKeywords) {
-      window.addEventListener(eventname, ( e ) => {
+      window.addEventListener(eventname, (e) => {
         // TODO
 
 
@@ -42,24 +42,24 @@ class Zcl extends Eventable{
     }
   }
 
-  onclick(e){
+  onclick(e) {
 
   }
 
-  clearScreen( color= 'rgba(47,79,79,1)' ){
+  clearScreen(color = 'rgba(47,79,79,1)') {
     var icvs = this.cvs;
-    
+
     icvs.save();
     icvs.fillStyle = color;
-    icvs.fillRect( 
+    icvs.fillRect(
       0,
-      0, 
+      0,
       this.candom.width,
-      this.candom.height );
+      this.candom.height);
 
     icvs.strokeStyle = "rgba(255, 255, 255, 0.2)";
     icvs.lineWidth = 0.8;
-    icvs.setLineDash( [ 6, 2, 6, 2] );
+    icvs.setLineDash([6, 2, 6, 2]);
     icvs.lineDashOffset = 2;
 
     var pixSizeX = 25;
@@ -67,57 +67,56 @@ class Zcl extends Eventable{
     var numberX = this.candom.height / pixSizeX;
     var numberY = this.candom.width / pixSizeY;
 
-    for( var i = 0; i< numberX; i++ ){
-      if( i % 4 == 0 )
+    for (var i = 0; i < numberX; i++) {
+      if (i % 4 == 0)
         icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
       else
         icvs.strokeStyle = "rgba(255, 255, 255, 0.2)";
       icvs.beginPath();
       icvs.moveTo(0 + 0.5, i * pixSizeX + 0.5);
-      icvs.lineTo(this.candom.width  + 0.5, i * pixSizeX  + 0.5);
+      icvs.lineTo(this.candom.width + 0.5, i * pixSizeX + 0.5);
       icvs.stroke();
     }
 
-    for( var i = 0; i< numberY; i++ ){
-      if( i % 4 == 0 )
+    for (var i = 0; i < numberY; i++) {
+      if (i % 4 == 0)
         icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
       else
         icvs.strokeStyle = "rgba(255, 255, 255, 0.2)";
 
       icvs.beginPath();
-      icvs.moveTo( i * pixSizeY + 0.5, 0);
-      icvs.lineTo(i * pixSizeY + 0.5, this.candom.height  + 0.5);
+      icvs.moveTo(i * pixSizeY + 0.5, 0);
+      icvs.lineTo(i * pixSizeY + 0.5, this.candom.height + 0.5);
       icvs.stroke();
     }
 
-    icvs.restore(); 
+    icvs.restore();
   }
 
-  start(){
+  start() {
 
     this.frame();
-  
+
   }
 
-  frame(){
+  frame() {
 
     this.clearScreen("rgba(40, 120, 255, 1)");
 
     for (const m of this.modules._modules) {
-      if( (m instanceof Showable)&&(m.draw) ){
+      if ((m instanceof Showable) && (m.draw)) {
         m.draw(this.cvs);
       }
     }
 
-    window.requestAnimationFrame( () => {
+    window.requestAnimationFrame(() => {
       this.frame();
     });
   }
-
 }
 
-class Zclm extends Eventable{
-  constructor(zcl){
+class Zclm extends Eventable {
+  constructor(zcl) {
     super();
 
     this._modules = [];
@@ -127,78 +126,48 @@ class Zclm extends Eventable{
     this._makeEvent();
   }
 
-  add( m ){
+  add(m) {
 
-    if( !( m instanceof Showable ) )
-      return ;
+    if (!(m instanceof Showable))
+      return;
 
     this._modules.push(m);
 
   }
 
-  onclick( e ){
+  onclick(e) {
     // console.log(`${e.type}:${e.offsetX},${e.offsetY}`);
   }
 
-  _makeEvent(){
+  _makeEvent() {
     for (const en of EventNamesMouse) {
-      if( en === "mousemove" ){
-        this.on( en, (e) =>{
-          let cp = new Shapes.point( e.offsetX, e.offsetY );
+      if (en === "mousemove") {
+        this.on(en, (e) => {
+          let cp = new Shapes.point(e.offsetX, e.offsetY);
           let is = false;
           for (const m of this._modules) {
-            if( m.contain && m.contain( cp ) ){
+            if (m.contain && m.contain(cp)) {
               this.zcl.candom.style.cursor = "pointer";
               is = true;
-              m.trigger( en , e);
-            }else if( m.contain && !m.contain( cp ) && ( m instanceof Showable )){
+              m.trigger(en, e);
+            } else if (m.contain && !m.contain(cp) && (m instanceof Showable)) {
               m.clicking = false;
               m.clickPoint = new Shapes.point();
 
-              if( !is ) this.zcl.candom.style.cursor = "auto";
+              if (!is) this.zcl.candom.style.cursor = "auto";
             }
           }
         });
       }
 
-      this.on( en, (e) =>{
-        let cp = new Shapes.point( e.offsetX, e.offsetY );
+      this.on(en, (e) => {
+        let cp = new Shapes.point(e.offsetX, e.offsetY);
         for (const m of this._modules) {
-          if( m.contain && m.contain( cp )){
-            m.trigger( en , e);
+          if (m.contain && m.contain(cp)) {
+            m.trigger(en, e);
           }
         }
       });
     }
   }
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

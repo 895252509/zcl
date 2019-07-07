@@ -5,17 +5,17 @@ class Showable extends Eventable {
 
     this.dragable = true;
 
-    this.dragging = false;
+    this._dragging = false;
 
-    this.clicking = false;
+    this._clicking = false;
 
     this.clickPoint = new Shapes.point();
   }
 
   onmousedown(e) {
     if (e.button === 0) { //left button
-      this.clicking = true;
-      this.clickPoint.value = new Shapes.point(e.offsetX, e.offsetY).sub(this._p1 || this._src._p1|| this._src._ps[0]);
+      this._clicking = true;
+      this.clickPoint.value = new Shapes.point(e.offsetX, e.offsetY).sub(this._p1 || this._src._p1 || this._src._ps[0]);
     } else if (e.button === 1) { //middle button
 
     } else if (e.button === 2) { //right button
@@ -25,18 +25,18 @@ class Showable extends Eventable {
 
   onmousemove(e) {
 
-    if (this.clicking && this.move) {
-      this.move(new Shapes.point(e.offsetX, e.offsetY).sub(this.clickPoint.add(this._p1|| this._src._p1 || this._src._ps[0])));
-      this.dragging = true;
+    if (this._clicking && this.move) {
+      this.move(new Shapes.point(e.offsetX, e.offsetY).sub(this.clickPoint.add(this._p1 || this._src._p1 || this._src._ps[0])));
+      this._dragging = true;
     } else {
-      this.dragging = false;
+      this._dragging = false;
     }
   }
 
   onmouseup(e) {
 
     if (e.button === 0) { //left button
-      this.clicking = false;
+      this._clicking = false;
       this.clickPoint = new Shapes.point();
     } else if (e.button === 1) { //middle button
 
@@ -60,9 +60,9 @@ class Polygon extends Showable {
   constructor(...ps) {
     super();
 
-    if( ps.length == 1 && ps[0] instanceof Shapes.polygon ){
-      this._src = ps[0];  
-    }else{
+    if (ps.length == 1 && ps[0] instanceof Shapes.polygon) {
+      this._src = ps[0];
+    } else {
       this._src = new Shapes.polygon(ps);
     }
   }
@@ -71,7 +71,7 @@ class Polygon extends Showable {
     return this._src.contain(p);
   }
 
-  push(p){
+  push(p) {
     this._src.push(p);
     return this;
   }
@@ -142,7 +142,7 @@ class Circle extends Showable {
   constructor(p1 = new Shapes.point(), r = 0) {
     super();
 
-    this._src = new Shapes.circle(p1,r);
+    this._src = new Shapes.circle(p1, r);
   }
 
   draw(ctx) {

@@ -39,30 +39,30 @@ class suport {
   }
 
   //计算两点的斜率
-  static cclSlope(x1, y1, x2, y2){
-    return ( Number.isFinite((y2 - y1)/(x2 - x1))? (y2 - y1)/(x2 - x1) : 0 ).toFixed(3);
+  static cclSlope(x1, y1, x2, y2) {
+    return (Number.isFinite((y2 - y1) / (x2 - x1)) ? (y2 - y1) / (x2 - x1) : 0).toFixed(3);
   }
 
   //dcmp
-  static dcmp(x){
+  static dcmp(x) {
     let eps = 0.001;
-    if( Math.abs(x) < eps ) return 0;
+    if (Math.abs(x) < eps) return 0;
     else
-      return x < 0? -1 : 1;
+      return x < 0 ? -1 : 1;
   }
 
-  static max(...arg){
+  static max(...arg) {
     let maxvalue = Number.MIN_VALUE;
     for (const value of arg) {
-      if( value > maxvalue ) maxvalue = value;
+      if (value > maxvalue) maxvalue = value;
     }
     return maxvalue;
   }
 
-  static min(...arg){
+  static min(...arg) {
     let minvalue = Number.MAX_VALUE;
     for (const value of arg) {
-      if( value < minvalue ) minvalue = value;
+      if (value < minvalue) minvalue = value;
     }
     return minvalue;
   }

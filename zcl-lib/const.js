@@ -1,23 +1,23 @@
-const EventNamesMouse = 
-[
-  'click'
-  ,'contextmenu'
-  ,'mousemove'
-  ,'mousedown'
-  ,'mouseup'
-  ,'dbclick'
-  ,'wheel'
-  ,'mouseover'
-  ,'focus'
-  ,'blur'
-];
+const EventNamesMouse =
+  [
+    'click'
+    , 'contextmenu'
+    , 'mousemove'
+    , 'mousedown'
+    , 'mouseup'
+    , 'dbclick'
+    , 'wheel'
+    , 'mouseover'
+    , 'focus'
+    , 'blur'
+  ];
 
-const EventNamesKeywords = 
-[
-  'keydown'
-  ,'keypress'
-  ,'keyup'
-];
+const EventNamesKeywords =
+  [
+    'keydown'
+    , 'keypress'
+    , 'keyup'
+  ];
 
-const EventNames = 
+const EventNames =
   EventNamesMouse.concat(EventNamesKeywords);
