@@ -1,5 +1,5 @@
 
-class Zcl extends BaseClass{
+class Zcl extends Eventable{
   constructor(params) {
     super();
 
@@ -12,7 +12,7 @@ class Zcl extends BaseClass{
   }
 
   add( m ){
-    if( !( m instanceof Shape ) )
+    if( !( m instanceof Showable ) )
       return ;
 
     this.modules.add(m);
@@ -62,13 +62,13 @@ class Zcl extends BaseClass{
     icvs.setLineDash( [ 6, 2, 6, 2] );
     icvs.lineDashOffset = 2;
 
-    var pixSizeX = 20;
-    var pixSizeY = 20;
+    var pixSizeX = 25;
+    var pixSizeY = 25;
     var numberX = this.candom.height / pixSizeX;
     var numberY = this.candom.width / pixSizeY;
 
     for( var i = 0; i< numberX; i++ ){
-      if( i % 3 == 0 )
+      if( i % 4 == 0 )
         icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
       else
         icvs.strokeStyle = "rgba(255, 255, 255, 0.2)";
@@ -79,7 +79,7 @@ class Zcl extends BaseClass{
     }
 
     for( var i = 0; i< numberY; i++ ){
-      if( i % 3 == 0 )
+      if( i % 4 == 0 )
         icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
       else
         icvs.strokeStyle = "rgba(255, 255, 255, 0.2)";
@@ -104,7 +104,7 @@ class Zcl extends BaseClass{
     this.clearScreen("rgba(40, 120, 255, 1)");
 
     for (const m of this.modules._modules) {
-      if( (m instanceof Shape)&&(m.draw) ){
+      if( (m instanceof Showable)&&(m.draw) ){
         m.draw(this.cvs);
       }
     }
@@ -116,7 +116,7 @@ class Zcl extends BaseClass{
 
 }
 
-class Zclm extends BaseClass{
+class Zclm extends Eventable{
   constructor(zcl){
     super();
 
@@ -129,7 +129,7 @@ class Zclm extends BaseClass{
 
   add( m ){
 
-    if( !( m instanceof Shape ) )
+    if( !( m instanceof Showable ) )
       return ;
 
     this._modules.push(m);
@@ -144,16 +144,16 @@ class Zclm extends BaseClass{
     for (const en of EventNamesMouse) {
       if( en === "mousemove" ){
         this.on( en, (e) =>{
-          let cp = new Point( e.offsetX, e.offsetY );
+          let cp = new Shapes.point( e.offsetX, e.offsetY );
           let is = false;
           for (const m of this._modules) {
             if( m.contain && m.contain( cp ) ){
               this.zcl.candom.style.cursor = "pointer";
               is = true;
               m.trigger( en , e);
-            }else if( m.contain && !m.contain( cp ) && ( m instanceof Shape )){
+            }else if( m.contain && !m.contain( cp ) && ( m instanceof Showable )){
               m.clicking = false;
-              m.clickPoint = new Point();
+              m.clickPoint = new Shapes.point();
 
               if( !is ) this.zcl.candom.style.cursor = "auto";
             }
@@ -162,7 +162,7 @@ class Zclm extends BaseClass{
       }
 
       this.on( en, (e) =>{
-        let cp = new Point( e.offsetX, e.offsetY );
+        let cp = new Shapes.point( e.offsetX, e.offsetY );
         for (const m of this._modules) {
           if( m.contain && m.contain( cp )){
             m.trigger( en , e);

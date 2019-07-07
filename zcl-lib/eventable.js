@@ -1,4 +1,4 @@
-class BaseClass{
+class Eventable{
     constructor(){
           // 存放注册的事件
       this.evt_handlers = [];
