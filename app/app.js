@@ -29,7 +29,18 @@ po1.on("click",function(e){
 }); 
 zcl.add(po1);
 
-
 zcl.start();
+
+zcl.on("click", (e)=>{
+  console.log(`po1:${e.type}:${e.offsetX},${e.offsetY}`);
+});
+
+zcl.on("timing$asyn",(e)=>{
+  let date = new Date(e.timing.framesecond*1000);
+  document.querySelector("#date").innerHTML = 
+    `当前时间: ${date.getFullYear()}-${date.getMonth()+1}-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  document.querySelectorAll("#fps")[0].innerHTML = `FPS:${e.timing.fps}`;
+  document.querySelectorAll("#avemillisecond")[0].innerHTML = `平均毫秒数:${e.timing.avemillisecond}`;
+});
 
 console.table(EventNames);

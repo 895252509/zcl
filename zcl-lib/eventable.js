@@ -31,6 +31,20 @@ class Eventable {
         }
       }
     }
+
+    if (this.evt_handlers[`${eventtype}$asyn`] && this.evt_handlers[`${eventtype}$asyn`].length !== 0) {
+      for (let i = 0, size = this.evt_handlers[`${eventtype}$asyn`].length; i < size; i++) {
+        let hand = this.evt_handlers[`${eventtype}$asyn`][i];
+        window.setTimeout(()=>{
+          hand.handler.call(this, e);
+        }, 0);
+        if (hand.isOnce) {
+          this.evt_handlers[`${eventtype}$asyn`].shift(i, 1);
+          size--;
+          i--;
+        }
+      }
+    }
   }
 
   once(eventtype, handler) {

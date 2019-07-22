@@ -1,5 +1,5 @@
 
-class Showable extends Eventable {
+class Displayable extends Eventable {
   constructor() {
     super();
 
@@ -56,7 +56,7 @@ class Showable extends Eventable {
   }
 }
 
-class Polygon extends Showable {
+class Polygon extends Displayable {
   constructor(...ps) {
     super();
 
@@ -102,15 +102,17 @@ class Polygon extends Showable {
 }
 
 
-class Rectangle extends Showable {
+class Rectangle extends Displayable {
   constructor(p1 = new Shapes.point(), p2 = new Shapes.point()) {
     super();
 
-    this._p1 = new Shapes.point(p1);
-    this._p2 = new Shapes.point(p2);
+    if( p1 instanceof Shapes.rectangle ){
+      this._src = p1;
+    }else{
+      this._src = new Shapes.rectangle( p1, p2 );
+    }
 
     this.figure;
-
     this.style;
   }
 
@@ -120,29 +122,34 @@ class Rectangle extends Showable {
     ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
 
     ctx.fillRect(
-      this._p1._x,
-      this._p1._y,
-      this._p2._x,
-      this._p2._y);
+      this._src._p1._x,
+      this._src._p1._y,
+      this._src._p2._x,
+      this._src._p2._y);
 
     ctx.restore();
   }
 
   contain(point) {
-    return suport.cclPointInRect(point._x, point._y, this._p1._x, this._p1._y, this._p1._x + this._p2._x, this._p1._y + this._p2._y);
+    //suport.cclPointInRect(point._x, point._y, this._p1._x, this._p1._y, this._p1._x + this._p2._x, this._p1._y + this._p2._y)
+    return this._src.contain(point);
   }
 
   move(p) {
-    this._p1.value = this._p1.add(p);
+    this._src._p1.value = this._src._p1.add(p);
   }
 
 }
 
-class Circle extends Showable {
+class Circle extends Displayable {
   constructor(p1 = new Shapes.point(), r = 0) {
     super();
-
-    this._src = new Shapes.circle(p1, r);
+    if( p1 instanceof Shapes.circle ){
+      this._src = p1;
+    }else{
+      this._src = new Shapes.circle(p1, r);
+    }
+    
   }
 
   draw(ctx) {
@@ -169,7 +176,7 @@ class Circle extends Showable {
 
 }
 
-class Line extends Showable {
+class Line extends Displayable {
   constructor(p1 = new Shapes.point(), p2 = new Shapes.point()) {
     super();
 

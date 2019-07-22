@@ -64,10 +64,28 @@ const Shapes = (function () {
     }
 
     contain(point) {
-      if (Math.abs(this._p1.getDistance(point) - this._r) <= pcs) return true;
-      return false;
+      return Math.abs(this._p1.getDistance(point) - this._r) <= pcs;
     }
 
+  }
+
+  class rectangle{
+    constructor( p1 = new point(), p2 = new point() ){
+      if( p1 instanceof rectangle ){
+        this._p1 = p1._p1;
+        this._p2 = p1._p2;
+      }else{
+        this._p1 = p1;
+        this._p2 = p2;
+      }
+    }
+
+    contain( point ){
+      return point._x > this._p1._x 
+        && point._x < this._p1._x + this._p2._x 
+        && point._y > this._p1._y 
+        && point._y < this._p1._y + this._p2._y;
+    }
   }
 
   class polygon {
@@ -117,6 +135,7 @@ const Shapes = (function () {
     point: point,
     size: size,
     circle: circle,
-    polygon: polygon
+    polygon: polygon,
+    rectangle: rectangle
   }
 })();
