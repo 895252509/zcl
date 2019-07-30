@@ -16,6 +16,7 @@ class Eventable {
       isOnce: false,
       handler: handler
     });
+    return this;
   }
 
   trigger(eventtype, e) {
@@ -45,6 +46,8 @@ class Eventable {
         }
       }
     }
+
+    return this;
   }
 
   once(eventtype, handler) {
@@ -53,6 +56,8 @@ class Eventable {
       isOnce: false,
       handler: handler
     });
+
+    return this;
   }
 
   _bindEvent() {
