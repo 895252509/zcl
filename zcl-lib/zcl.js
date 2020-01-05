@@ -55,7 +55,7 @@ class Zcl extends Eventable {
           this[`on${eventname}`].call(this, e);
         }
         // 事件分发到模型
-        //this.models.trigger(eventname, e);
+        this.models.trigger(eventname, e);
 
       });
     }
