@@ -1,5 +1,5 @@
 const Shapes = (function () {
-  let pcs = 2.5;
+  let pcs = 5;
   let eps = 0.01;
 
   class point {
@@ -99,6 +99,12 @@ const Shapes = (function () {
       return this;
     }
 
+    add(p){
+      for( let i= 0, j= this._ps.length; i < j; i++){
+        this._ps[i] = this._ps[i].add(p);
+      }
+    }
+
     contain(p) {
 
       let flag = false;
@@ -111,7 +117,6 @@ const Shapes = (function () {
 
         P1 = this._ps[i];
         P2 = this._ps[j];
-        // if (new Line(P1, P2).onsegment(p)) return true;
 
         if (p._y < suport.min(P1._y, P2._y) || p._y > suport.max(P1._y, P2._y)) continue;
 
@@ -139,3 +144,5 @@ const Shapes = (function () {
     rectangle: rectangle
   }
 })();
+
+const S = Shapes;

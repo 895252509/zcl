@@ -15,6 +15,7 @@ class Displayable extends Eventable {
   onmousedown(e) {
     if (e.button === 0) { //left button
       this._clicking = true;
+      // TODO
       this.clickPoint.value = new Shapes.point(e.offsetX, e.offsetY).sub(this._p1 || this._src._p1 || this._src._ps[0]);
     } else if (e.button === 1) { //middle button
 
@@ -26,6 +27,7 @@ class Displayable extends Eventable {
   onmousemove(e) {
 
     if (this._clicking && this.move) {
+      //TODO
       this.move(new Shapes.point(e.offsetX, e.offsetY).sub(this.clickPoint.add(this._p1 || this._src._p1 || this._src._ps[0])));
       this._dragging = true;
     } else {
@@ -45,6 +47,11 @@ class Displayable extends Eventable {
     }
   }
 
+  onmouseout(e){
+    // this._clicking = false;
+    // this.clickPoint = new Shapes.point();
+  }
+
   //Interface
   draw() {
 
@@ -53,6 +60,14 @@ class Displayable extends Eventable {
   //Interface
   contain() {
 
+  }
+
+  get clicking(){
+    return this._clicking
+  }
+
+  set clicking(v){
+    this._clicking = v;
   }
 }
 
@@ -69,6 +84,10 @@ class Polygon extends Displayable {
 
   contain(p) {
     return this._src.contain(p);
+  }
+
+  move(p){
+    this._src.add(p);
   }
 
   push(p) {
@@ -209,12 +228,16 @@ class Line extends Displayable {
   }
 
   contain(p) {
+    /*
     return suport.dcmp(this._p1.sub(p).cross(this._p2.sub(p))) == 0
       && suport.dcmp(this._p1.sub(p).dot(this._p2.sub(p))) <= 0;
+    */
+    return this.getBoundingBox().contain(p);
   }
 
   move(p) {
-
+    this._p1 = this._p1.add(p);
+    this._p2 = this._p2.add(p);
   }
 
   getBoundingBox() {

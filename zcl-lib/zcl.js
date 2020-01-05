@@ -28,6 +28,7 @@ class Zcl extends Eventable {
     this.cvs = this.candom.getContext('2d');
 
     this.models = new Zclm(this);
+    super.addChild(this.models);
 
     this.init();
   }
@@ -46,12 +47,15 @@ class Zcl extends Eventable {
 
     for (const eventname of EventNamesMouse) {
       this.candom.addEventListener(eventname, (e) => {
+
+        // console.log(e.type);
+        
         // 当前类事件
         if (this[`on${eventname}`]) {
           this[`on${eventname}`].call(this, e);
         }
         // 事件分发到模型
-        this.models.trigger(eventname, e);
+        //this.models.trigger(eventname, e);
 
       });
     }
@@ -221,6 +225,7 @@ class Zclm extends Eventable {
               m.clickPoint = new Shapes.point();
 
               if (!is) this.zcl.candom.style.cursor = "auto";
+              m.trigger('mouseout', e);
             }
           }
         });

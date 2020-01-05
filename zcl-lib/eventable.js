@@ -1,13 +1,42 @@
 class Eventable {
   constructor() {
+
     // 存放注册的事件
     this.evt_handlers = [];
 
     this.iseventabled = true;
 
+    // sub object
+    this.childen = [];
+    this.parent = {};
+
     this._bindEvent();
   }
 
+  addChild(child){
+    if( child instanceof Eventable ){
+      if( child.parent instanceof Eventable ){
+        throw new Error(`${typeof child} 父元素已存在`);  
+      } else{
+        child.parent = this;
+        this.childen.push(child);
+        return this;
+      }
+    }else{
+      throw new Error(`${typeof child} 不是Eventable的子类。`);
+    }
+  }
+
+  deleteChild(child){
+    let indexs = this.childen.findIndex((v)=>{
+      if( v === child ) return true;
+    });
+    this.childen.shift(indexs[0],1);
+    child.parent = null;
+    return this;
+  }
+
+  // 绑定事件函数
   on(eventtype, handler) {
     // if( !(eventtype in Eventtype) ) return ; 
     if (!this.evt_handlers[eventtype])
@@ -19,6 +48,7 @@ class Eventable {
     return this;
   }
 
+  //触发事件
   trigger(eventtype, e) {
     // if( !(eventtype in Eventtype) ) return ; 
     if (this.evt_handlers[eventtype] && this.evt_handlers[eventtype].length !== 0) {
@@ -46,6 +76,11 @@ class Eventable {
         }
       }
     }
+
+    // dispatchEvent
+    // for( const child of this.childen ){
+    //   child.trigger(eventtype, e);
+    // }
 
     return this;
   }

@@ -5,7 +5,17 @@
 // 事件名称
 // 鼠标事件
 const EventNamesMouse = [
-    'click', 'contextmenu', 'mousemove', 'mousedown', 'mouseup', 'dbclick', 'wheel', 'mouseover', 'focus', 'blur'
+    'click', 
+    'contextmenu', 
+    'mousemove', 
+    'mousedown', 
+    'mouseup', 
+    'dbclick', 
+    'wheel', 
+    'mouseover', 
+    'focus', 
+    'blur',
+    'mouseout'
 ];
 
 // 键盘事件
