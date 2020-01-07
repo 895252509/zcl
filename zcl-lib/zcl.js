@@ -194,7 +194,6 @@ class Zclm extends Eventable {
 
     this._dispatchEventToModel();
 
-    this._makeEvent();
   }
 
   add(m) {
@@ -205,10 +204,12 @@ class Zclm extends Eventable {
     this._models.push(m);
   }
 
-  onclick(e) {
-
-  }
-
+  /**
+   * 响应鼠标移动事件
+   *  
+   * 1. 设置给模型对象设置鼠标划过效果
+   * 2. 判断鼠标划过状态，触发鼠标离开事件
+   */
   onmousemove(e){
     let cp = new Shapes.point(e.offsetX, e.offsetY);
     let is = false;
@@ -217,9 +218,6 @@ class Zclm extends Eventable {
         this.canvasDom.candom.style.cursor = "pointer";
         is = true;
       } else if (m.contain && !m.contain(cp) && (m instanceof Displayable)) {
-        //m.clicking = false;
-        //m.clickPoint = new Shapes.point();
-
         if (!is) this.canvasDom.candom.style.cursor = "auto";
         m.trigger('mouseout', e);
       }
@@ -245,15 +243,7 @@ class Zclm extends Eventable {
     }
   }
 
-  _makeEvent() {
-    if (en === "mousemove") {
-      this.on(en, (e) => {
-
-      });
-    }
-  }
-
   get canvasDom(){
-    return this.zcl;
+    return this._zcl;
   }
 }
