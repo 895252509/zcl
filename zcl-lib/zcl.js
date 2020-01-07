@@ -24,12 +24,15 @@ class Zcl extends Eventable {
       avemillisecond : 0
     }
 
+    // 获取保存canvas的dom对象
     this.candom = document.querySelector(params);
     this.cvs = this.candom.getContext('2d');
 
+    // 创建model管理器
     this.models = new Zclm(this);
     super.addChild(this.models);
 
+    // 初始化操作
     this.init();
   }
 
@@ -45,27 +48,8 @@ class Zcl extends Eventable {
 
     this.trigger( "beforeinit", this );
 
-    for (const eventname of EventNamesMouse) {
-      this.candom.addEventListener(eventname, (e) => {
-
-        // console.log(e.type);
-        
-        // 当前类事件
-        if (this[`on${eventname}`]) {
-          this[`on${eventname}`].call(this, e);
-        }
-        // 事件分发到模型
-        this.models.trigger(eventname, e);
-
-      });
-    }
-
-    for (const eventname of EventNamesKeywords) {
-      window.addEventListener(eventname, (e) => {
-        // TODO
-
-      });
-    }
+    // 管理dom传递的事件
+    this._dispatchEvent();
 
     this.trigger( "afterinit", this );
   }
@@ -117,6 +101,10 @@ class Zcl extends Eventable {
     });
   }
 
+  /**
+   * 阻止右键菜单
+   * @param {MouseEvent} e 
+   */
   oncontextmenu(e){
     if(e.preventDefault){
       e.preventDefault();
@@ -125,6 +113,10 @@ class Zcl extends Eventable {
     }
   }
 
+  /**
+   * 防止双击时选中文字
+   * @param {MouseEvent} e 
+   */
   ondbclick(e){
     if(e.preventDefault){
       e.preventDefault();
@@ -137,6 +129,11 @@ class Zcl extends Eventable {
     return window.performance?window.performance.timing.navigationStart + window.performance.now():new Date() .getTime();
   }
 
+  /**
+   * 临时函数-画一个背景图
+   * 
+   * @param {*} color 
+   */
   _clearScreen(color = 'rgba(47,79,79,1)') {
     var icvs = this.cvs;
 
@@ -183,6 +180,25 @@ class Zcl extends Eventable {
 
     icvs.restore();
   }
+
+  /**
+   * 分发dom事件
+   * 
+   */
+  _dispatchEvent(){
+    for (const eventname of EventNamesMouse) {
+      this.candom.addEventListener(eventname, (e) => {
+        this.trigger(eventname, e);
+      });
+    }
+
+    for (const eventname of EventNamesKeywords) {
+      window.addEventListener(eventname, (e) => {
+        // TODO
+
+      });
+    }
+  }
 }
 
 class Zclm extends Eventable {
@@ -191,9 +207,7 @@ class Zclm extends Eventable {
 
     this._models = [];
 
-    this.zcl = zcl;
-
-    this._makeEvent();
+    this._zcl = zcl;
   }
 
   add(m) {
@@ -201,44 +215,30 @@ class Zclm extends Eventable {
     if (!(m instanceof Displayable))
       return;
 
+    this.addChild(m);
+    
     this._models.push(m);
-
   }
 
-  onclick(e) {
-    // console.log(`${e.type}:${e.offsetX},${e.offsetY}`);
-  }
-
-  _makeEvent() {
-    for (const en of EventNamesMouse) {
-      if (en === "mousemove") {
-        this.on(en, (e) => {
-          let cp = new Shapes.point(e.offsetX, e.offsetY);
-          let is = false;
-          for (const m of this._models) {
-            if (m.contain && m.contain(cp)) {
-              this.zcl.candom.style.cursor = "pointer";
-              is = true;
-              m.trigger(en, e);
-            } else if (m.contain && !m.contain(cp) && (m instanceof Displayable)) {
-              m.clicking = false;
-              m.clickPoint = new Shapes.point();
-
-              if (!is) this.zcl.candom.style.cursor = "auto";
-              m.trigger('mouseout', e);
-            }
-          }
-        });
+  /**
+   * 响应鼠标移动事件
+   *  
+   * 1. 设置给模型对象设置鼠标划过效果
+   * 2. 判断鼠标划过状态，触发鼠标离开事件
+   * 
+   */
+  onmousemove(e){
+    let cp = new Shapes.point(e.offsetX, e.offsetY);
+    let is = false;
+    for (const m of this._models) {
+      if (m.contain && m.contain(cp)) {
+        this.parent.candom.style.cursor = "pointer";
+        is = true;
+      } else if (m.contain && !m.contain(cp) && (m instanceof Displayable)) {
+        if (!is) this.parent.candom.style.cursor = "auto";
+        m.trigger('mouseout', e);
       }
-
-      this.on(en, (e) => {
-        let cp = new Shapes.point(e.offsetX, e.offsetY);
-        for (const m of this._models) {
-          if (m.contain && m.contain(cp)) {
-            m.trigger(en, e);
-          }
-        }
-      });
     }
   }
+
 }

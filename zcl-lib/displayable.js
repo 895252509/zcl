@@ -48,8 +48,8 @@ class Displayable extends Eventable {
   }
 
   onmouseout(e){
-    // this._clicking = false;
-    // this.clickPoint = new Shapes.point();
+    this.clicking = false;
+    this.clickPoint = new Shapes.point();
   }
 
   //Interface
@@ -58,8 +58,16 @@ class Displayable extends Eventable {
   }
 
   //Interface
-  contain() {
+  contain(p) {
+    return false;
+  }
 
+  _allowTrigger(en, e){
+    let cp = new Shapes.point(e.offsetX, e.offsetY);
+    switch(en){
+      default:
+        return this.contain(cp);
+    }
   }
 
   get clicking(){
