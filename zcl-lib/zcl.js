@@ -101,6 +101,10 @@ class Zcl extends Eventable {
     });
   }
 
+  /**
+   * 阻止右键菜单
+   * @param {MouseEvent} e 
+   */
   oncontextmenu(e){
     if(e.preventDefault){
       e.preventDefault();
@@ -109,6 +113,10 @@ class Zcl extends Eventable {
     }
   }
 
+  /**
+   * 防止双击时选中文字
+   * @param {MouseEvent} e 
+   */
   ondbclick(e){
     if(e.preventDefault){
       e.preventDefault();
@@ -121,6 +129,11 @@ class Zcl extends Eventable {
     return window.performance?window.performance.timing.navigationStart + window.performance.now():new Date() .getTime();
   }
 
+  /**
+   * 临时函数-画一个背景图
+   * 
+   * @param {*} color 
+   */
   _clearScreen(color = 'rgba(47,79,79,1)') {
     var icvs = this.cvs;
 
@@ -168,6 +181,10 @@ class Zcl extends Eventable {
     icvs.restore();
   }
 
+  /**
+   * 分发dom事件
+   * 
+   */
   _dispatchEvent(){
     for (const eventname of EventNamesMouse) {
       this.candom.addEventListener(eventname, (e) => {
@@ -191,15 +208,14 @@ class Zclm extends Eventable {
     this._models = [];
 
     this._zcl = zcl;
-
-    this._dispatchEventToModel();
-
   }
 
   add(m) {
 
     if (!(m instanceof Displayable))
       return;
+
+    this.addChild(m);
     
     this._models.push(m);
   }
@@ -209,41 +225,20 @@ class Zclm extends Eventable {
    *  
    * 1. 设置给模型对象设置鼠标划过效果
    * 2. 判断鼠标划过状态，触发鼠标离开事件
+   * 
    */
   onmousemove(e){
     let cp = new Shapes.point(e.offsetX, e.offsetY);
     let is = false;
     for (const m of this._models) {
       if (m.contain && m.contain(cp)) {
-        this.canvasDom.candom.style.cursor = "pointer";
+        this.parent.candom.style.cursor = "pointer";
         is = true;
       } else if (m.contain && !m.contain(cp) && (m instanceof Displayable)) {
-        if (!is) this.canvasDom.candom.style.cursor = "auto";
+        if (!is) this.parent.candom.style.cursor = "auto";
         m.trigger('mouseout', e);
       }
     }
   }
 
-  /**
-   * 分发事件到各个模型对象
-   * 
-   * 给所有事件绑定事件处理函数，处理的方式是只要判断鼠标在该模型对象的坐标范围内，就触发对应的事件
-   * 
-   */
-  _dispatchEventToModel(){
-    for (const en of EventNamesMouse) {
-      this.on(en, (e) => {
-        let cp = new Shapes.point(e.offsetX, e.offsetY);
-        for (const m of this._models) {
-          if (m.contain && m.contain(cp)) {
-            m.trigger(en, e);
-          }
-        }
-      });
-    }
-  }
-
-  get canvasDom(){
-    return this._zcl;
-  }
 }

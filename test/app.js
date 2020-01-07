@@ -19,6 +19,9 @@ let l3 = new Line(new Shapes.point(100, 100), new Shapes.point(260, 200));
 l3.on("mousemove", (e) => {
   console.log(`${e.type}:${e.offsetX},${e.offsetY}`);
 })
+l3.on("mouseout", (e)=>{
+  console.log(`l3 mouseout pos:${e.type}:${e.offsetX},${e.offsetY}`);
+})
 zcl.add(l3);
 
 let po1 = new Polygon(l3.getBoundingBox());

@@ -58,8 +58,16 @@ class Displayable extends Eventable {
   }
 
   //Interface
-  contain() {
+  contain(p) {
+    return false;
+  }
 
+  _allowTrigger(en, e){
+    let cp = new Shapes.point(e.offsetX, e.offsetY);
+    switch(en){
+      default:
+        return this.contain(cp);
+    }
   }
 
   get clicking(){

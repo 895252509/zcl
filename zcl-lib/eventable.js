@@ -50,7 +50,10 @@ class Eventable {
 
   //触发事件
   trigger(eventtype, e) {
-    // if( !(eventtype in Eventtype) ) return ; 
+
+    // 外部触发事件时，如果该对象阻止事件触发，则不触发事件
+    if( !this._allowTrigger(eventtype, e) ) return;
+
     if (this.evt_handlers[eventtype] && this.evt_handlers[eventtype].length !== 0) {
       for (let i = 0, size = this.evt_handlers[eventtype].length; i < size; i++) {
         let hand = this.evt_handlers[eventtype][i];
@@ -101,5 +104,10 @@ class Eventable {
         this.on(en, this[`on${en}`].bind(this));
       }
     }
+  }
+
+  // 判断对象是否需要阻止事件触发
+  _allowTrigger(eventtype, e){
+    return true;
   }
 }
