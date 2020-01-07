@@ -24,12 +24,15 @@ class Zcl extends Eventable {
       avemillisecond : 0
     }
 
+    // 获取保存canvas的dom对象
     this.candom = document.querySelector(params);
     this.cvs = this.candom.getContext('2d');
 
+    // 创建model管理器
     this.models = new Zclm(this);
     super.addChild(this.models);
 
+    // 初始化操作
     this.init();
   }
 
@@ -45,27 +48,8 @@ class Zcl extends Eventable {
 
     this.trigger( "beforeinit", this );
 
-    for (const eventname of EventNamesMouse) {
-      this.candom.addEventListener(eventname, (e) => {
-
-        // console.log(e.type);
-        
-        // 当前类事件
-        if (this[`on${eventname}`]) {
-          this[`on${eventname}`].call(this, e);
-        }
-        // 事件分发到模型
-        this.models.trigger(eventname, e);
-
-      });
-    }
-
-    for (const eventname of EventNamesKeywords) {
-      window.addEventListener(eventname, (e) => {
-        // TODO
-
-      });
-    }
+    // 管理dom传递的事件
+    this._dispatchEvent();
 
     this.trigger( "afterinit", this );
   }
@@ -183,6 +167,21 @@ class Zcl extends Eventable {
 
     icvs.restore();
   }
+
+  _dispatchEvent(){
+    for (const eventname of EventNamesMouse) {
+      this.candom.addEventListener(eventname, (e) => {
+        this.trigger(eventname, e);
+      });
+    }
+
+    for (const eventname of EventNamesKeywords) {
+      window.addEventListener(eventname, (e) => {
+        // TODO
+
+      });
+    }
+  }
 }
 
 class Zclm extends Eventable {
@@ -191,7 +190,9 @@ class Zclm extends Eventable {
 
     this._models = [];
 
-    this.zcl = zcl;
+    this._zcl = zcl;
+
+    this._dispatchEventToModel();
 
     this._makeEvent();
   }
@@ -200,37 +201,39 @@ class Zclm extends Eventable {
 
     if (!(m instanceof Displayable))
       return;
-
+    
     this._models.push(m);
-
   }
 
   onclick(e) {
-    // console.log(`${e.type}:${e.offsetX},${e.offsetY}`);
+
   }
 
-  _makeEvent() {
-    for (const en of EventNamesMouse) {
-      if (en === "mousemove") {
-        this.on(en, (e) => {
-          let cp = new Shapes.point(e.offsetX, e.offsetY);
-          let is = false;
-          for (const m of this._models) {
-            if (m.contain && m.contain(cp)) {
-              this.zcl.candom.style.cursor = "pointer";
-              is = true;
-              m.trigger(en, e);
-            } else if (m.contain && !m.contain(cp) && (m instanceof Displayable)) {
-              m.clicking = false;
-              m.clickPoint = new Shapes.point();
+  onmousemove(e){
+    let cp = new Shapes.point(e.offsetX, e.offsetY);
+    let is = false;
+    for (const m of this._models) {
+      if (m.contain && m.contain(cp)) {
+        this.canvasDom.candom.style.cursor = "pointer";
+        is = true;
+      } else if (m.contain && !m.contain(cp) && (m instanceof Displayable)) {
+        //m.clicking = false;
+        //m.clickPoint = new Shapes.point();
 
-              if (!is) this.zcl.candom.style.cursor = "auto";
-              m.trigger('mouseout', e);
-            }
-          }
-        });
+        if (!is) this.canvasDom.candom.style.cursor = "auto";
+        m.trigger('mouseout', e);
       }
+    }
+  }
 
+  /**
+   * 分发事件到各个模型对象
+   * 
+   * 给所有事件绑定事件处理函数，处理的方式是只要判断鼠标在该模型对象的坐标范围内，就触发对应的事件
+   * 
+   */
+  _dispatchEventToModel(){
+    for (const en of EventNamesMouse) {
       this.on(en, (e) => {
         let cp = new Shapes.point(e.offsetX, e.offsetY);
         for (const m of this._models) {
@@ -240,5 +243,17 @@ class Zclm extends Eventable {
         }
       });
     }
+  }
+
+  _makeEvent() {
+    if (en === "mousemove") {
+      this.on(en, (e) => {
+
+      });
+    }
+  }
+
+  get canvasDom(){
+    return this.zcl;
   }
 }

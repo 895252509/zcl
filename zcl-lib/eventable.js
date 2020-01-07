@@ -78,9 +78,9 @@ class Eventable {
     }
 
     // dispatchEvent
-    // for( const child of this.childen ){
-    //   child.trigger(eventtype, e);
-    // }
+    for( const child of this.childen ){
+      child.trigger(eventtype, e);
+    }
 
     return this;
   }

@@ -48,8 +48,8 @@ class Displayable extends Eventable {
   }
 
   onmouseout(e){
-    // this._clicking = false;
-    // this.clickPoint = new Shapes.point();
+    this.clicking = false;
+    this.clickPoint = new Shapes.point();
   }
 
   //Interface

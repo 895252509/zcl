@@ -31,9 +31,8 @@ zcl.add(po1);
 zcl.start();
 
 zcl.on("click", (e) => {
-  console.log(`po1:${e.type}:${e.offsetX},${e.offsetY}`);
+  console.log(`*** zcl click pos:${e.type}:${e.offsetX},${e.offsetY} ***`);
 });
-
 
 // 显示渲染信息
 zcl.on("timing$asyn", (e) => {
