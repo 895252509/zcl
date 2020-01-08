@@ -236,7 +236,6 @@ class Zclm extends Eventable {
         is = true;
       } else if (m.contain && !m.contain(cp) && (m instanceof Displayable)) {
         if (!is) this.parent.candom.style.cursor = "auto";
-        m.trigger('mouseout', e);
       }
     }
   }

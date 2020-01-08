@@ -2,10 +2,10 @@ let zcl = new Zcl("#can");
 
 let re = new Rectangle(new Shapes.point(20, 20), new Shapes.point(100, 100));
 re.on("click", function(e) {
-  console.log(`${e.type}:${e.offsetX},${e.offsetY}`);
+  console.log(`re click:${e.type}:${e.offsetX},${e.offsetY}`);
 })
-re.on("mousemove", (e) => {
-
+re.on("mouseout", (e) => {
+  console.log(`re mouseout:${e.type}:${e.offsetX},${e.offsetY}`);
 });
 zcl.add(re);
 
@@ -16,10 +16,7 @@ c.on("click", (e) => {
 zcl.add(c);
 
 let l3 = new Line(new Shapes.point(100, 100), new Shapes.point(260, 200));
-l3.on("mousemove", (e) => {
-  console.log(`${e.type}:${e.offsetX},${e.offsetY}`);
-})
-l3.on("mouseout", (e)=>{
+l3.on("mouseout", function(e){
   console.log(`l3 mouseout pos:${e.type}:${e.offsetX},${e.offsetY}`);
 })
 zcl.add(l3);
@@ -33,7 +30,7 @@ zcl.add(po1);
 // 开始渲染
 zcl.start();
 
-zcl.on("click", (e) => {
+zcl.on("click", function (e) {
   console.log(`*** zcl click pos:${e.type}:${e.offsetX},${e.offsetY} ***`);
 });
 
