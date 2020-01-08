@@ -1,4 +1,14 @@
-
+/**
+ * 可显示对象
+ * 
+ * 继承自事件对象
+ * 
+ * TODO:
+ * 1. 坐标计算和参数传递需要更加规范化！！！
+ * 
+ * BUGS:
+ * 1. mouseout 现在还不能正常触发。（一点都不行！！）
+ */
 class Displayable extends Eventable {
   constructor() {
     super();
@@ -10,6 +20,8 @@ class Displayable extends Eventable {
     this._clicking = false;
 
     this.clickPoint = new Shapes.point();
+
+    this._hoverhint = null;
   }
 
   onmousedown(e) {
@@ -25,10 +37,12 @@ class Displayable extends Eventable {
   }
 
   onmousemove(e) {
+    let mp = new Shapes.point(e.offsetX, e.offsetY);
+    this._hoverhint = mp;
 
     if (this._clicking && this.move) {
       //TODO
-      this.move(new Shapes.point(e.offsetX, e.offsetY).sub(this.clickPoint.add(this._p1 || this._src._p1 || this._src._ps[0])));
+      this.move(mp.sub(this.clickPoint.add(this._p1 || this._src._p1 || this._src._ps[0])));
       this._dragging = true;
     } else {
       this._dragging = false;
@@ -52,21 +66,47 @@ class Displayable extends Eventable {
     this.clickPoint = new Shapes.point();
   }
 
-  //Interface
+  /**
+   * @interface
+   */
   draw() {
 
   }
 
-  //Interface
+  /**
+   * @interface
+   * @param {S.point} p 
+   * @returns {boolean}
+   */
   contain(p) {
     return false;
   }
 
-  _allowTrigger(en, e){
+  /**
+   * 
+   * @param {EventNames*} en 
+   * @param {MouseEvent} e
+   * @returns {boolean} 
+   */
+  allowTrigger(en, e){
+
+    // 暂时先忽略所有的dom mouseout事件
+    if( e.type === 'mouseout') return false;
+
     let cp = new Shapes.point(e.offsetX, e.offsetY);
+    let isContain = this.contain(cp);
+
     switch(en){
+      case 'mousemove':
+        if( !isContain && this._hoverhint !== null ){
+          this.trigger('mouseout', e);
+          this._hoverhint = null;
+        }
+        return isContain;
+      case 'mouseout':
+        return true;
       default:
-        return this.contain(cp);
+        return isContain;
     }
   }
 
