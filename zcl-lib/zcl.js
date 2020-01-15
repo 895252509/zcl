@@ -238,7 +238,7 @@ class Zclm extends Eventable {
    * 响应鼠标移动事件
    *  
    * 1. 设置给模型对象设置鼠标划过效果
-   * 2. 判断鼠标划过状态，触发鼠标离开事件
+   * ~2. 判断鼠标划过状态，触发鼠标离开事件
    * 
    */
   onmousemove(e){
@@ -254,4 +254,16 @@ class Zclm extends Eventable {
     }
   }
 
+  lastedModel( m ){
+    const moduls = this._models;
+    const index = moduls.findIndex( v => v === m );
+    if( index >= 0 && index < moduls.length - 1){
+      // const temp = moduls[moduls.length - 1];
+      // moduls[moduls.length - 1] = m;
+      // moduls[index] = temp;
+
+      this._models = moduls.filter( v => v !== m);;
+      this._models.push(m);
+    }
+  }
 }

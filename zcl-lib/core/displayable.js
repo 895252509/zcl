@@ -29,6 +29,7 @@ class Displayable extends Eventable {
       this._clicking = true;
       // TODO
       this.clickPoint.value = new Shapes.point(e.offsetX, e.offsetY).sub(this._p1 || this._src._p1 || this._src._ps[0]);
+      this.parent.lastedModel(this);
     } else if (e.button === 1) { //middle button
 
     } else if (e.button === 2) { //right button
