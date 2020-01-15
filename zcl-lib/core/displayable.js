@@ -62,8 +62,8 @@ class Displayable extends Eventable {
   }
 
   onmouseout(e){
-    this.clicking = false;
-    this.clickPoint = new Shapes.point();
+    // this.clicking = false;
+    // this.clickPoint = new Shapes.point();
   }
 
   /**
@@ -96,11 +96,18 @@ class Displayable extends Eventable {
     let cp = new Shapes.point(e.offsetX, e.offsetY);
     let isContain = this.contain(cp);
 
-    switch(en){
+    switch( en ){
       case 'mousemove':
-        if( !isContain && this._hoverhint !== null ){
-          this.trigger('mouseout', e);
-          this._hoverhint = null;
+        if( !isContain ){
+          // 当上一个事件帧存在鼠标滑过点时，触发mouseout事件
+          if( this._hoverhint !== null ){
+            this.trigger('mouseout', e);
+            this._hoverhint = null;
+          }
+          // 当鼠标正在点击状态时依然能收到mousemove消息
+          if( this.clicking ){
+            return !isContain;
+          }
         }
         return isContain;
       case 'mouseout':
