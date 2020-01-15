@@ -21,6 +21,12 @@ l3.on("mouseout", function(e){
 })
 zcl.add(l3);
 
+let po1 = new Polygon(l3.getBoundingBox());
+po1.on("click", function(e) {
+  console.log(`po1:${e.type}:${e.offsetX},${e.offsetY}`);
+});
+zcl.add(po1);
+
 // 开始渲染
 zcl.start();
 
