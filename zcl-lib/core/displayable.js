@@ -22,14 +22,19 @@ class Displayable extends Eventable {
     this.clickPoint = new Shapes.point();
 
     this._hoverhint = null;
+
+    this._isFocus = false;
   }
 
   onmousedown(e) {
     if (e.button === 0) { //left button
-      this._clicking = true;
-      // TODO
-      this.clickPoint.value = new Shapes.point(e.offsetX, e.offsetY).sub(this._p1 || this._src._p1 || this._src._ps[0]);
-      this.parent.lastedModel(this);
+      this.trigger('focus', e);
+      if( this._isFocus ){
+        this._clicking = true;
+        // TODO
+        this.clickPoint.value = new Shapes.point(e.offsetX, e.offsetY).sub(this._p1 || this._src._p1 || this._src._ps[0]);
+        this.parent.lastedModel(this);
+      }
     } else if (e.button === 1) { //middle button
 
     } else if (e.button === 2) { //right button
@@ -41,7 +46,7 @@ class Displayable extends Eventable {
     let mp = new Shapes.point(e.offsetX, e.offsetY);
     this._hoverhint = mp;
 
-    if (this._clicking && this.move) {
+    if (this._clicking && this.move && this._isFocus) {
       //TODO
       this.move(mp.sub(this.clickPoint.add(this._p1 || this._src._p1 || this._src._ps[0])));
       this._dragging = true;
@@ -55,6 +60,7 @@ class Displayable extends Eventable {
     if (e.button === 0) { //left button
       this._clicking = false;
       this.clickPoint = new Shapes.point();
+      this.trigger('blur', e);
     } else if (e.button === 1) { //middle button
 
     } else if (e.button === 2) { //right button

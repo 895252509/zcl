@@ -222,6 +222,8 @@ class Zclm extends Eventable {
     this._models = [];
 
     this._zcl = zcl;
+
+    this._focus = null;
   }
 
   add(m) {
@@ -232,6 +234,20 @@ class Zclm extends Eventable {
     this.addChild(m);
     
     this._models.push(m);
+
+    const parent = this;
+
+    m.on('focus', function(e){
+      if( !parent._focus ){
+        parent._focus = m;
+        m._isFocus = true;
+      }
+    })
+
+    m.on('blur', function(e){
+      parent._focus = null;
+      m._isFocus = false;
+    });
   }
 
   /**
@@ -258,11 +274,7 @@ class Zclm extends Eventable {
     const moduls = this._models;
     const index = moduls.findIndex( v => v === m );
     if( index >= 0 && index < moduls.length - 1){
-      // const temp = moduls[moduls.length - 1];
-      // moduls[moduls.length - 1] = m;
-      // moduls[index] = temp;
-
-      this._models = moduls.filter( v => v !== m);;
+      this._models = moduls.filter( v => v !== m);
       this._models.push(m);
     }
   }
