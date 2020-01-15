@@ -7,7 +7,7 @@
  * 1. 坐标计算和参数传递需要更加规范化！！！
  * 
  * BUGS:
- * 1. mouseout 现在还不能正常触发。（一点都不行！！）
+ * 1. mouseout 现在还不能正常触发。（一点都不行！！） OK
  */
 class Displayable extends Eventable {
   constructor() {
@@ -216,7 +216,6 @@ class Circle extends Displayable {
     }else{
       this._src = new Shapes.circle(p1, r);
     }
-    
   }
 
   draw(ctx) {
@@ -227,7 +226,6 @@ class Circle extends Displayable {
     ctx.beginPath();
     ctx.arc(this._src._p1._x, this._src._p1._y, this._src._r,
       0, Math.PI * 2, 1);
-
     ctx.stroke();
 
     ctx.restore();

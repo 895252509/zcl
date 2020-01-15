@@ -26,7 +26,7 @@ class Zcl extends Eventable {
 
     // 获取保存canvas的dom对象
     this.candom = document.querySelector(params);
-    this.cvs = this.candom.getContext('2d');
+    this.cvs = this.candom.getContext('2d',{ alpha : true });
 
     // 创建model管理器
     this.models = new Zclm(this);
@@ -134,7 +134,7 @@ class Zcl extends Eventable {
    * 
    * @param {*} color 
    */
-  _clearScreen(color = 'rgba(47,79,79,1)') {
+  _clearScreen(color = 'rgba(40, 120, 255, 1)') {
     var icvs = this.cvs;
 
     icvs.save();
@@ -145,7 +145,7 @@ class Zcl extends Eventable {
       this.candom.width,
       this.candom.height);
 
-    icvs.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    icvs.strokeStyle = "rgba(255, 255, 255, 1)";
     icvs.lineWidth = 0.8;
     icvs.setLineDash([6, 2, 6, 2]);
     icvs.lineDashOffset = 2;
@@ -198,6 +198,20 @@ class Zcl extends Eventable {
 
       });
     }
+  }
+
+  /**
+   * @returns {HTMLCanvasElement}
+   */
+  get getCanvas(){
+    return this.candom;
+  }
+
+  /**
+   * @returns {OffscreenCanvasRenderingContext2D}
+   */
+  get getPen(){
+    return this.cvs;
   }
 }
 

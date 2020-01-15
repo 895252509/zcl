@@ -36,7 +36,7 @@ zcl.on("click", function (e) {
 
 // 显示渲染信息
 zcl.on("timing$asyn", (e) => {
-  let date = new Date(e.timing.framesecond * 1000);
+  let date = new Date();
   document.querySelector("#date").innerHTML =
     `当前时间: ${date.getFullYear()}-${date.getMonth()+1}-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
   document.querySelectorAll("#fps")[0].innerHTML = `FPS:${e.timing.fps}`;

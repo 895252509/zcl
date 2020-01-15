@@ -14,12 +14,17 @@
   }
 
   .can{
-    background-color: darkslategray;
     margin: 5px 0px 0px 10px;
   }
 
+  #can1{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+
   .div1{
-    background-color: aquamarine;
+    background-color: white;;
     width: 400px;
     height: 100px;
     margin-top: 10px;
@@ -29,14 +34,15 @@
 
   .info{
     display: block;
-    font-family: sans-serif;
+    font-family: "Microsoft Yahei UI",sans-serif;
     font-size: 12px;
-    line-height: 12.5px;
+    line-height: 16px;
+    margin: 3px;
   }
   </style>
 </head> 
 <body>
-  <canvas id="can" width="400" height="600" class="can"></canvas>
+  <canvas id="can" width="800" height="600" class="can"></canvas>
 
   <div id='test' class="div1">
     <span class="info" id="date"></span>
@@ -48,13 +54,13 @@
   <script src="app/Snake.js"></script>
   <script src="app/app.js"></script>
 -->
-  <script src="../zcl-lib/common/suport.js"></script>
-  <script src="../zcl-lib/core/const.js"></script>
+  <script src="../../zcl-lib/common/suport.js"></script>
+  <script src="../../zcl-lib/core/const.js"></script>
 
-  <script src="../zcl-lib/core/shapes.js"></script>
-  <script src="../zcl-lib/core/eventable.js"></script>
-  <script src="../zcl-lib/core/displayable.js"></script>
-  <script src="../zcl-lib/zcl.js"></script>
+  <script src="../../zcl-lib/core/shapes.js"></script>
+  <script src="../../zcl-lib/core/eventable.js"></script>
+  <script src="../../zcl-lib/core/displayable.js"></script>
+  <script src="../../zcl-lib/zcl.js"></script>
 
   <script src="app.js"></script>
 </body>
