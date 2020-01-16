@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Home Page</title>
+  <!--
+  <script src="js/lib.js"></script>-->
+
+  <style>
+  *{
+    margin: 0px;
+    padding: 0px;
+  }
+
+  .can{
+    margin: 5px 0px 0px 10px;
+  }
+
+  #can1{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+
+  .div1{
+    background-color: white;;
+    width: 400px;
+    height: 100px;
+    margin-top: 10px;
+    display: block;
+    margin: 5px 0px 0px 10px;
+  }
+
+  .info{
+    display: block;
+    font-family: "Microsoft YaHei UI",sans-serif;
+    font-size: 16px;
+    line-height: 20px;
+    margin: 3px;
+    font-weight: 800;
+  }
+  </style>
+</head> 
+<body>
+  <canvas id="can" width="800" height="600" class="can"></canvas>
+
+  <div id='test' class="div1">
+    <span class="info" id="date"></span>
+    <span class="info" id="fps"></span>
+    <span class="info" id="avemillisecond"></span>
+  </div>
+
+  <!--
+  <script src="app/Snake.js"></script>
+  <script src="app/app.js"></script>
+-->
+  <script src="../../zcl-lib/common/suport.js"></script>
+  <script src="../../zcl-lib/core/const.js"></script>
+
+  <script src="../../zcl-lib/core/shapes.js"></script>
+  <script src="../../zcl-lib/core/eventable.js"></script>
+  <script src="../../zcl-lib/core/displayable.js"></script>
+  <script src="../../zcl-lib/zcl.js"></script>
+
+  <script src="app.js"></script>
+</body>
+</html>

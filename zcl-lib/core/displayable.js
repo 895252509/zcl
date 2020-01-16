@@ -7,7 +7,7 @@
  * 1. 坐标计算和参数传递需要更加规范化！！！
  * 
  * BUGS:
- * 1. mouseout 现在还不能正常触发。（一点都不行！！）
+ * 1. mouseout 现在还不能正常触发。（一点都不行！！） OK
  */
 class Displayable extends Eventable {
   constructor() {
@@ -22,13 +22,19 @@ class Displayable extends Eventable {
     this.clickPoint = new Shapes.point();
 
     this._hoverhint = null;
+
+    this._isFocus = false;
   }
 
   onmousedown(e) {
     if (e.button === 0) { //left button
-      this._clicking = true;
-      // TODO
-      this.clickPoint.value = new Shapes.point(e.offsetX, e.offsetY).sub(this._p1 || this._src._p1 || this._src._ps[0]);
+      this.trigger('focus', e);
+      if( this._isFocus ){
+        this._clicking = true;
+        // TODO
+        this.clickPoint.value = new Shapes.point(e.offsetX, e.offsetY).sub(this._p1 || this._src._p1 || this._src._ps[0]);
+        this.parent.lastedModel(this);
+      }
     } else if (e.button === 1) { //middle button
 
     } else if (e.button === 2) { //right button
@@ -40,7 +46,7 @@ class Displayable extends Eventable {
     let mp = new Shapes.point(e.offsetX, e.offsetY);
     this._hoverhint = mp;
 
-    if (this._clicking && this.move) {
+    if (this._clicking && this.move && this._isFocus) {
       //TODO
       this.move(mp.sub(this.clickPoint.add(this._p1 || this._src._p1 || this._src._ps[0])));
       this._dragging = true;
@@ -54,6 +60,7 @@ class Displayable extends Eventable {
     if (e.button === 0) { //left button
       this._clicking = false;
       this.clickPoint = new Shapes.point();
+      this.trigger('blur', e);
     } else if (e.button === 1) { //middle button
 
     } else if (e.button === 2) { //right button
@@ -62,8 +69,8 @@ class Displayable extends Eventable {
   }
 
   onmouseout(e){
-    this.clicking = false;
-    this.clickPoint = new Shapes.point();
+    // this.clicking = false;
+    // this.clickPoint = new Shapes.point();
   }
 
   /**
@@ -96,11 +103,18 @@ class Displayable extends Eventable {
     let cp = new Shapes.point(e.offsetX, e.offsetY);
     let isContain = this.contain(cp);
 
-    switch(en){
+    switch( en ){
       case 'mousemove':
-        if( !isContain && this._hoverhint !== null ){
-          this.trigger('mouseout', e);
-          this._hoverhint = null;
+        if( !isContain ){
+          // 当上一个事件帧存在鼠标滑过点时，触发mouseout事件
+          if( this._hoverhint !== null ){
+            this.trigger('mouseout', e);
+            this._hoverhint = null;
+          }
+          // 当鼠标正在点击状态时依然能收到mousemove消息
+          if( this.clicking ){
+            return !isContain;
+          }
         }
         return isContain;
       case 'mouseout':
@@ -216,7 +230,6 @@ class Circle extends Displayable {
     }else{
       this._src = new Shapes.circle(p1, r);
     }
-    
   }
 
   draw(ctx) {
@@ -227,7 +240,6 @@ class Circle extends Displayable {
     ctx.beginPath();
     ctx.arc(this._src._p1._x, this._src._p1._y, this._src._r,
       0, Math.PI * 2, 1);
-
     ctx.stroke();
 
     ctx.restore();

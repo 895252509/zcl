@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+    #a{
+        margin: 0 auto;
+        padding: 30px;
+        width: 500px;
+        height: 500px;
+
+        position: relative;
+
+        background-color: beige;
+    }
+
+    .cas{
+        position: absolute;
+        top: 30px;
+        left: 30px;
+    }
+
+    #c1{
+        z-index: 10;
+    }
+    #c2{
+        z-index: 20;
+    }
+    
+    
+    </style>
+</head>
+<body>
+    
+    <div id="a">
+        <canvas class="cas" id="c1" width="500" height="500"></canvas>
+        <canvas class="cas" id="c2" width="500" height="500"></canvas>
+    </div>
+
+</body>
+
+<script>
+
+const c1 = document.querySelector('#c1');
+const c2 = document.querySelector('#c2');
+const c1ctx = c1.getContext('2d');
+const c2ctx = c2.getContext('2d');
+
+c1ctx.fillRect(0,0,100,100);
+
+c2ctx.fillStyle = 'rgba(255,0,0,0.5)';
+
+c2ctx.fillRect(50,50,150,150);
+
+
+const c2ctx2 = c2.getContext('2d');
+c2ctx2.fillStyle = 'rgba(0,255,0,0.5)';
+c2ctx2.fillRect(120,120,100,100);
+c2ctx2.drawImage(c1,300,300);
+
+
+</script>
+
+</html>
