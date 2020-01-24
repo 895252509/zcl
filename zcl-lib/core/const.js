@@ -29,5 +29,5 @@ const EventNames =
 
 // 自定义事件
 const EventNamesZcl = [
-    'beforeframe', 'afterframe', 'beforeinit', 'afterinit', 'timing'
+    'beforeframe', 'afterframe', 'beforeinit', 'afterinit', 'timing', 'focus', 'blur'
 ];

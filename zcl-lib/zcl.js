@@ -68,7 +68,7 @@ class Zcl extends Eventable {
     this.timing.framestartmillisecond = this._getTime;
     this.trigger("beforeframe", this);
 
-    this._clearScreen("rgba(40, 120, 255, 1)");
+    this._clearScreen("rgba(152, 223, 255, 1)");
 
     for (const m of this.models._models) {
       if ((m instanceof Displayable) && (m.draw)) {
@@ -157,9 +157,9 @@ class Zcl extends Eventable {
 
     for (var i = 0; i < numberX; i++) {
       if (i % 4 == 0)
-        icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
+        icvs.strokeStyle = "rgba(255, 255, 255, 0.6)";
       else
-        icvs.strokeStyle = "rgba(255, 255, 255, 0.2)";
+        icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
       icvs.beginPath();
       icvs.moveTo(0 + 0.5, i * pixSizeX + 0.5);
       icvs.lineTo(this.candom.width + 0.5, i * pixSizeX + 0.5);
@@ -168,9 +168,9 @@ class Zcl extends Eventable {
 
     for (var i = 0; i < numberY; i++) {
       if (i % 4 == 0)
-        icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
+        icvs.strokeStyle = "rgba(255, 255, 255, 0.6)";
       else
-        icvs.strokeStyle = "rgba(255, 255, 255, 0.2)";
+        icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
 
       icvs.beginPath();
       icvs.moveTo(i * pixSizeY + 0.5, 0);
@@ -222,6 +222,8 @@ class Zclm extends Eventable {
     this._models = [];
 
     this._zcl = zcl;
+
+    this._focus = null;
   }
 
   add(m) {
@@ -232,13 +234,27 @@ class Zclm extends Eventable {
     this.addChild(m);
     
     this._models.push(m);
+
+    const parent = this;
+
+    m.on('focus', function(e){
+      if( !parent._focus ){
+        parent._focus = m;
+        m._isFocus = true;
+      }
+    })
+
+    m.on('blur', function(e){
+      parent._focus = null;
+      m._isFocus = false;
+    });
   }
 
   /**
    * 响应鼠标移动事件
    *  
    * 1. 设置给模型对象设置鼠标划过效果
-   * 2. 判断鼠标划过状态，触发鼠标离开事件
+   * ~2. 判断鼠标划过状态，触发鼠标离开事件
    * 
    */
   onmousemove(e){
@@ -254,4 +270,12 @@ class Zclm extends Eventable {
     }
   }
 
+  lastedModel( m ){
+    const moduls = this._models;
+    const index = moduls.findIndex( v => v === m );
+    if( index >= 0 && index < moduls.length - 1){
+      this._models = moduls.filter( v => v !== m);
+      this._models.push(m);
+    }
+  }
 }
