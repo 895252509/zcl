@@ -32,6 +32,12 @@ class Zcl extends Eventable {
     this.models = new Zclm(this);
     super.addChild(this.models);
 
+    // 浏览器坐标到canvas坐标的变换
+    this._coverateX = 0;
+    this._coverateY = 0;
+    this._coverateScale = 1.0;
+    this._coverateScaleRate = 0.02;
+
     // 初始化操作
     this.init();
   }
@@ -101,6 +107,14 @@ class Zcl extends Eventable {
     });
   }
 
+  onwheel(e){
+    // 实现滑动滚轮缩放画面
+    const wheeld =  e.wheelDelta;
+    const scale = wheeld < 0? 1-this._coverateScaleRate : 1+this._coverateScaleRate;
+    this._coverateScale *= scale;
+    this.getPen.scale(scale, scale); 
+  }
+
   /**
    * 阻止右键菜单
    * @param {MouseEvent} e 
@@ -140,10 +154,10 @@ class Zcl extends Eventable {
     icvs.save();
     icvs.fillStyle = color;
     icvs.fillRect(
-      0,
-      0,
-      this.candom.width,
-      this.candom.height);
+      -this.candom.width,
+      -this.candom.height,
+      this.candom.width*2,
+      this.candom.height*2);
 
     icvs.strokeStyle = "rgba(255, 255, 255, 1)";
     icvs.lineWidth = 0.8;
