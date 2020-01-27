@@ -44,6 +44,11 @@ class Eventable {
     this._bindEvent();
   }
 
+  /**
+   * 添加子元素
+   * @param {Eventable} child 
+   * @returns {Eventable} this
+   */
   addChild(child){
     if( child instanceof Eventable ){
       if( child.parent instanceof Eventable ){
@@ -58,6 +63,11 @@ class Eventable {
     }
   }
 
+  /**
+   * 删除子对象
+   * @param {Eventable} child 
+   * @returns {Eventable} this
+   */
   deleteChild(child){
     let indexs = this.childen.findIndex((v)=>{
       if( v === child ) return true;
@@ -67,7 +77,12 @@ class Eventable {
     return this;
   }
 
-  // 绑定事件函数
+  /**
+   * 添加事件响应函数
+   * @param {EventNames} eventtype 
+   * @param {Function} handler 
+   * @returns {Eventable} this
+   */
   on(eventtype, handler) {
     // if( !(eventtype in Eventtype) ) return ; 
     if (!this.evt_handlers[eventtype])
@@ -79,7 +94,12 @@ class Eventable {
     return this;
   }
 
-  //触发事件
+  /**
+   * 触发绑定的事件
+   * @param {EventNames} eventtype 
+   * @param {Event} e 
+   * @returns {Eventable} this
+   */
   trigger(eventtype, e) {
 
     // 外部触发事件时，如果该对象阻止事件触发，则不触发事件
@@ -111,6 +131,9 @@ class Eventable {
       }
     }
 
+    // 在分发给子对象前对事件对象进行加工
+    this.additionEvent(e);
+
     // dispatchEvent
     for( const child of this.childen ){
       child.trigger(eventtype, e);
@@ -119,6 +142,12 @@ class Eventable {
     return this;
   }
 
+  /**
+   * 绑定只响应一次的事件
+   * @param {EventNames} eventtype 
+   * @param {Function} handler 
+   * @returns {Eventable} this
+   */
   once(eventtype, handler) {
     // if( !(eventtype in Eventtype) ) return ; 
     this.evt_handlers[eventtype].push({
@@ -129,6 +158,9 @@ class Eventable {
     return this;
   }
 
+  /**
+   * 绑定对象自己的事件
+   */
   _bindEvent() {
     for (const en of EventNamesMouse) {
       if (this[`on${en}`]) {
@@ -140,10 +172,21 @@ class Eventable {
   /**
    * 判断对象是否需要阻止事件触发
    * @interface
-   * @param {EventNames*} eventtype 
-   * @param {MouseEvent} e 
+   * @param {EventNames} eventtype 
+   * @param {Event} e 
+   * @returns {Boolean}
    */
   allowTrigger(eventtype, e){
     return true;
+  }
+
+  /**
+   * 对事件对象进行封装处理
+   * @interface
+   * @param {Event} e
+   * @returns {Eventable} this
+   */
+  additionEvent(e){
+    return this;
   }
 }
