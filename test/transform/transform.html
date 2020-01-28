@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+      #c1{
+        background-color: darkslateblue;
+      }
+    
+    </style>
+</head>
+<body>
+    <canvas id="c1" width="600" height="400"></canvas>
+</body>
+<script>
+  const c1 = document.querySelector('#c1');
+  const c1ctx = c1.getContext('2d');
+
+  c1ctx.strokeRect(
+    10.5, 10.5, 100, 100
+  );
+
+</script>
+</html>
