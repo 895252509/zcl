@@ -14,14 +14,86 @@
 </head>
 <body>
     <canvas id="c1" width="600" height="400"></canvas>
+    <button onclick="return cavreset()">reset</button>
 </body>
 <script>
   const c1 = document.querySelector('#c1');
   const c1ctx = c1.getContext('2d');
 
-  c1ctx.strokeRect(
-    10.5, 10.5, 100, 100
-  );
+  let _coverateScaleRate = 0.02;
+  let _coverateScale = 1.0;
+  let _coverateX = 0;
+  let _coverateY = 0;
+  let _clickX = 0;
+  let _clickY = 0;
+  let _click = false;
+
+  c1.addEventListener('wheel', function(e){
+    const wheeld =  e.wheelDelta;
+    const scale = wheeld < 0? 1-_coverateScaleRate : 1+_coverateScaleRate;
+    _coverateScale *= scale;
+    // c1ctx.scale(scale, scale);
+    // c1ctx.translate(e.clientX *_coverateScale, e.clientY*_coverateScale);
+    c1ctx.scale(scale, scale);
+    // c1ctx.transform(scale, 0.0, 0.0, scale, 0.0, 0.0);
+  });
+
+  c1.addEventListener('mousemove', function(e){
+    if( _click ){
+      const _offsetX = e.clientX - _clickX;
+      const _offsetY = e.clientY - _clickY;
+
+      _coverateX += _offsetX;
+      _coverateY += _offsetY;
+
+      // c1ctx.transform(1.00, 0.0, 0.0, 1.00, _offsetX, _offsetY);
+      c1ctx.translate(_offsetX * _coverateScale, _offsetY * _coverateScale);
+
+      _clickX = e.clientX;
+      _clickY = e.clientY;
+    }
+  });
+  c1.addEventListener('mousedown', function(e){
+    if( e.button === 0 ){
+      _click = true;
+      _clickX = e.clientX;
+      _clickY = e.clientY;
+    }
+  });
+  c1.addEventListener('mouseup', function(e){
+    if( e.button === 0 ){
+      _click = false;
+      _clickX = 0;
+      _clickY = 0;
+    }
+  });
+
+  function render(){
+    c1ctx.clearRect(
+      -c1.clientWidth,-c1.clientHeight,2*c1.clientWidth,2*c1.clientHeight
+    );
+
+    c1ctx.strokeRect(
+      10.5, 10.5, 100, 100
+    );
+
+    window.requestAnimationFrame(render);
+  }
+
+  render();
+
+  function cavreset() {
+    c1ctx.resetTransform();
+  }
+
+</script>
+
+<script>
+
+
+
+
+
 
 </script>
 </html>
