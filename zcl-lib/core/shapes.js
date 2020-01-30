@@ -24,6 +24,13 @@ const Shapes = (function () {
       this._y = p._y;
     }
 
+    dotMatrix(m){
+      if( !m instanceof Matrix32) return ;
+      this._x = m[0]*this._x + m[2]*this._y + m[4];
+      this._y = m[1]*this._x + m[3]*this._y + m[5];
+      return this;
+    }
+
     sub(p) {
       console.assert(p instanceof point);
       return new point(this._x - p._x, this._y - p._y);

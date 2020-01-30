@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./math.js"></script>
+    <script src="../../zcl-lib/core/shapes.js"></script>
     <title>Document</title>
     <style>
       #c1{
@@ -34,7 +36,9 @@
     _coverateScale *= scale;
     // c1ctx.scale(scale, scale);
     // c1ctx.translate(e.clientX *_coverateScale, e.clientY*_coverateScale);
+    c1ctx.translate(-e.clientX, -e.clientY);
     c1ctx.scale(scale, scale);
+    // c1ctx.translate(-e.clientX, -e.clientY);
     // c1ctx.transform(scale, 0.0, 0.0, scale, 0.0, 0.0);
   });
 
@@ -47,7 +51,7 @@
       _coverateY += _offsetY;
 
       // c1ctx.transform(1.00, 0.0, 0.0, 1.00, _offsetX, _offsetY);
-      c1ctx.translate(_offsetX * _coverateScale, _offsetY * _coverateScale);
+      c1ctx.translate(_offsetX , _offsetY );
 
       _clickX = e.clientX;
       _clickY = e.clientY;
@@ -72,6 +76,8 @@
     c1ctx.clearRect(
       -c1.clientWidth,-c1.clientHeight,2*c1.clientWidth,2*c1.clientHeight
     );
+
+    c1ctx.strokeStyle = "white";
 
     c1ctx.strokeRect(
       10.5, 10.5, 100, 100
