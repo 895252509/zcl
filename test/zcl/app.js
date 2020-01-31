@@ -1,6 +1,6 @@
 let zcl = new Zcl("#can");
 
-let re = new Rectangle(new Shapes.point(20, 20), new Shapes.point(100, 100));
+let re = new Rectangle(new Shapes.point(300, 20), new Shapes.point(100, 100));
 re.on("click", function(e) {
   console.log(`re click:${e.type}:${e.offsetX},${e.offsetY}`);
 })

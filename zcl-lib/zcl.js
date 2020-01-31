@@ -32,11 +32,10 @@ class Zcl extends Eventable {
     this.models = new Zclm(this);
     super.addChild(this.models);
 
+    // 每次缩放的缩放比率
+    this._scaleRate = 0.02;
     // 浏览器坐标到canvas坐标的变换
-    this._coverateX = 0;
-    this._coverateY = 0;
-    this._coverateScale = 1.0;
-    this._coverateScaleRate = 0.02;
+    this._transfromTo = new Matrix32();
 
     // 初始化操作
     this.init();
@@ -110,9 +109,27 @@ class Zcl extends Eventable {
   onwheel(e){
     // 实现滑动滚轮缩放画面
     const wheeld =  e.wheelDelta;
-    const scale = wheeld < 0? 1-this._coverateScaleRate : 1+this._coverateScaleRate;
-    this._coverateScale *= scale;
-    this.getPen.scale(scale, scale); 
+    const scale = wheeld < 0? 1-this._scaleRate : 1+this._scaleRate;
+
+    // 缩放全局画布
+    this.pen.scale(scale, scale);
+    // 同时计算浏览器坐标到画布坐标的变换矩阵
+    this._transfromTo.scale(scale, scale);
+  }
+
+  /**
+   * 处理事件对象
+   * 1. 给事件对象添加转换到画布坐标的鼠标活动坐标
+   * @override
+   * @param {Event} e
+   * @returns {Zcl} this 
+   */
+  additionEvent(e){
+    let p = new S.point(e.offsetX, e.offsetY);
+    p.dotMatrix(this._transfromTo.invert());
+    e._worldX = p._x;
+    e._worldY = p._y;
+    return this;
   }
 
   /**
@@ -224,7 +241,7 @@ class Zcl extends Eventable {
   /**
    * @returns {OffscreenCanvasRenderingContext2D}
    */
-  get getPen(){
+  get pen(){
     return this.cvs;
   }
 }
@@ -272,7 +289,7 @@ class Zclm extends Eventable {
    * 
    */
   onmousemove(e){
-    let cp = new Shapes.point(e.offsetX, e.offsetY);
+    let cp = new Shapes.point(e._worldX, e._worldY);
     let is = false;
     for (const m of this._models) {
       if (m.contain && m.contain(cp)) {
