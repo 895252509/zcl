@@ -1,5 +1,3 @@
-const matrixmeta = typeof Float32Array === 'undefined'? Array : Float32Array;
-
 /**
  * 
  * 3*2矩阵
@@ -31,7 +29,7 @@ class Matrix32 extends Array{
   }
 
 /**
- * 平移变换
+ * 平移
  * @param {number} x 
  * @param {number} y
  * @returns {Matrix32} this 
@@ -55,6 +53,29 @@ class Matrix32 extends Array{
     this[3] *= y;
     this[4] *= x;
     this[5] *= y;
+    return this;
+  }
+
+  /**
+   * 旋转
+   * @param {number} rad 弧度值（Math.PI*n）
+   * @returns {Matrix32} this 
+   */
+  rotate(rad){
+    let sin = Math.sin(rad);
+    let cos = Math.cos(rad);
+    let a = this[0];
+    let b = this[1];
+    let c = this[2];
+    let d = this[3];
+    let e = this[4];
+    let f = this[5];
+    this[0] = a * cos + b * sin;
+    this[1] = -a * sin + b * cos;
+    this[2] = c * cos + d * sin;
+    this[3] = -c * sin + cos * d;
+    this[4] = cos * e + sin * f;
+    this[5] = cos * f - sin * e;
     return this;
   }
 }
