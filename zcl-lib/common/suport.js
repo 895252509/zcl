@@ -66,4 +66,15 @@ class suport {
     }
     return minvalue;
   }
+
+  static getZ(num){
+    var rounded;
+    rounded = (0.5 + num) | 0;
+    // A double bitwise not.
+    rounded = ~~ (0.5 + num);
+    // Finally, a left bitwise shift.
+    rounded = (0.5 + num) << 0;
+    
+    return rounded;
+}
 }

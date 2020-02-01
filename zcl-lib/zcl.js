@@ -37,6 +37,17 @@ class Zcl extends Eventable {
     // 浏览器坐标到canvas坐标的变换
     this._transfromTo = new Matrix32();
 
+    // 鼠标点击画布
+    this._isclick = false;
+
+    // 上一次鼠标位置
+    this._preoffsetX = 0;
+    this._preoffsetY = 0;
+
+    // 上一次鼠标位置
+    this._preworldX = 0;
+    this._preworldY = 0;
+
     // 初始化操作
     this.init();
   }
@@ -106,6 +117,34 @@ class Zcl extends Eventable {
     });
   }
 
+  /**
+   * 处理事件对象
+   * 1. 给事件对象添加转换到画布坐标的鼠标活动坐标
+   * @override
+   * @param {Event} e
+   * @returns {Zcl} this 
+   */
+  additionEvent(e){
+    // 如果是鼠标事件
+    if( e instanceof MouseEvent ){
+      let p = new S.point(e.offsetX, e.offsetY);
+      p.dotMatrix(this._transfromTo.invert());
+      e._worldX = p._x;
+      e._worldY = p._y;
+      // 如果是鼠标移动事件，就计算距离量
+      // if( typeof e.movementX === 'undefined' &&
+      //   typeof e.movementY === 'undefined'){
+      e._movedX = e.offsetX - this._preoffsetX;
+      e._movedY = e.offsetY - this._preoffsetY;
+      // }
+    }
+    return this;
+  }
+
+  /**
+   * 鼠标滚轮滚动事件
+   * @param {Event} e 
+   */
   onwheel(e){
     // 实现滑动滚轮缩放画面
     const wheeld =  e.wheelDelta;
@@ -118,18 +157,40 @@ class Zcl extends Eventable {
   }
 
   /**
-   * 处理事件对象
-   * 1. 给事件对象添加转换到画布坐标的鼠标活动坐标
-   * @override
-   * @param {Event} e
-   * @returns {Zcl} this 
+   * 鼠标移动事件
+   * @param {Event} e 
    */
-  additionEvent(e){
-    let p = new S.point(e.offsetX, e.offsetY);
-    p.dotMatrix(this._transfromTo.invert());
-    e._worldX = p._x;
-    e._worldY = p._y;
-    return this;
+  onmousemove(e){
+    this.additionEvent(e);
+
+    if( this._isclick ){
+      const p = new S.point(e._movedX, e._movedY);
+      p.dotMatrix(this._transfromTo.copy.resetTranslate().invert());
+      if( p._x !== 0 || p._y !== 0 ){
+        this.pen.translate(p._x, p._y);
+        this._transfromTo.translate(p._x, p._y);
+      }
+    }
+    this._preoffsetX = e.offsetX;
+    this._preoffsetY = e.offsetY;
+    this._preworldX = e._worldX;
+    this._preworldY = e._worldY;
+  }
+
+  /**
+   * 鼠标左键按下事件
+   * @param {Event} e 
+   */
+  onmouseleftdown(e){
+    this._isclick = true;
+  }
+
+  /**
+   * 鼠标左键按下事件
+   * @param {Event} e 
+   */
+  onmouseleftup(e){
+    this._isclick = false;
   }
 
   /**
@@ -228,6 +289,28 @@ class Zcl extends Eventable {
         // TODO
 
       });
+    }
+  }
+
+  // 重新定义事件，分别处理鼠标按下事件
+  onmousedown(e){
+    if( e.button === 0 ){
+      this.trigger('mouseleftdown', e);
+    }else if( e.button === 1 ){
+      this.trigger('mousemiddledown', e);
+    }else if( e.button === 2 ){
+      this.trigger('mouserightdown', e);
+    }
+  }
+
+  // 重新定义事件，分别处理鼠标抬起事件
+  onmouseup(e){
+    if( e.button === 0 ){
+      this.trigger('mouseleftup', e);
+    }else if( e.button === 1 ){
+      this.trigger('mousemiddleup', e);
+    }else if( e.button === 2 ){
+      this.trigger('mouserightup', e);
     }
   }
 

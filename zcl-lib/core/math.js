@@ -122,6 +122,16 @@ class Matrix32 extends Array{
     return this;
   }
 
+  /**
+   * 重置平移
+   * @returns {Matrix32} this
+   */
+  resetTranslate(){
+    this[4] = 0;
+    this[5] = 0;
+    return this;
+  }
+
   get translateX(){
     return this[4];
   }
@@ -136,5 +146,20 @@ class Matrix32 extends Array{
 
   get scaleY(){
     return this[3];
+  }
+
+  get copy(){
+    const copy = new Matrix32();
+    copy[0] = this[0];
+    copy[1] = this[1];
+    copy[2] = this[2];
+    copy[3] = this[3];
+    copy[4] = this[4];
+    copy[5] = this[5];
+    return copy;
+  }
+
+  log(){
+    console.log(`${this[0]},\t${this[1]},\t${this[4]},\n${this[3]},\t${this[2]},\t${this[5]}`);
   }
 }

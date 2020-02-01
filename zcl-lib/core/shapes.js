@@ -26,8 +26,10 @@ const Shapes = (function () {
 
     dotMatrix(m){
       if( !m instanceof Matrix32) return ;
-      this._x = m[0]*this._x + m[2]*this._y + m[4];
-      this._y = m[1]*this._x + m[3]*this._y + m[5];
+      // this._x = suport.getZ( m[0]*this._x + m[2]*this._y + m[4] );
+      // this._y = suport.getZ( m[1]*this._x + m[3]*this._y + m[5] );
+      this._x = m[0]*this._x + m[2]*this._y + m[4] ;
+      this._y = m[1]*this._x + m[3]*this._y + m[5] ;
       return this;
     }
 
@@ -54,6 +56,10 @@ const Shapes = (function () {
     getDistance(p) {
       console.assert(p instanceof point);
       return suport.getDistance(this._x, this._y, p._x, p._y).toFixed(3);
+    }
+
+    log(){
+      console.log(`point=x:${this._x},y:${this._y}`);
     }
   }
 
