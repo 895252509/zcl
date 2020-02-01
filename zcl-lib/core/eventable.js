@@ -162,7 +162,7 @@ class Eventable {
    * 绑定对象自己的事件
    */
   _bindEvent() {
-    for (const en of EventNamesMouse) {
+    for (const en of EventNames) {
       if (this[`on${en}`]) {
         this.on(en, this[`on${en}`].bind(this));
       }

@@ -23,11 +23,13 @@ const EventNamesKeywords = [
   'keydown', 'keypress', 'keyup'
 ];
 
-// 鼠标+键盘
-const EventNames =
-  EventNamesMouse.concat(EventNamesKeywords);
-
 // 自定义事件
 const EventNamesZcl = [
-  'beforeframe', 'afterframe', 'beforeinit', 'afterinit', 'timing', 'focus', 'blur'
+  'beforeframe', 'afterframe', 'beforeinit', 'afterinit', 'timing', 'focus', 'blur', 
+  'mouseleftdown', 'mouserightdown', 'mousemiddledown',
+  'mouseleftup', 'mouserightup', 'mousemiddleup',
 ];
+
+// 鼠标+键盘+自定义事件
+const EventNames =
+  EventNamesMouse.concat(EventNamesKeywords).concat(EventNamesZcl);
