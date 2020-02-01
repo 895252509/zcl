@@ -35,7 +35,7 @@ class Zcl extends Eventable {
     // 每次缩放的缩放比率
     this._scaleRate = 0.02;
     // 浏览器坐标到canvas坐标的变换
-    this._transfromTo = new Matrix32();
+    this._transformTo = new Matrix32();
 
     // 鼠标点击画布
     this._isclick = false;
@@ -128,7 +128,7 @@ class Zcl extends Eventable {
     // 如果是鼠标事件
     if( e instanceof MouseEvent ){
       let p = new S.point(e.offsetX, e.offsetY);
-      p.dotMatrix(this._transfromTo.invert());
+      p.dotMatrix(this._transformTo.invert());
       e._worldX = p._x;
       e._worldY = p._y;
       // 如果是鼠标移动事件，就计算距离量
@@ -150,10 +150,10 @@ class Zcl extends Eventable {
     const wheeld =  e.wheelDelta;
     const scale = wheeld < 0? 1-this._scaleRate : 1+this._scaleRate;
 
+    // 先计算浏览器坐标到画布坐标的变换矩阵
+    this._transformTo.scale(scale, scale);
     // 缩放全局画布
-    this.pen.scale(scale, scale);
-    // 同时计算浏览器坐标到画布坐标的变换矩阵
-    this._transfromTo.scale(scale, scale);
+    this.doTransform();
   }
 
   /**
@@ -165,10 +165,9 @@ class Zcl extends Eventable {
 
     if( this._isclick ){
       const p = new S.point(e._movedX, e._movedY);
-      p.dotMatrix(this._transfromTo.copy.resetTranslate().invert());
       if( p._x !== 0 || p._y !== 0 ){
-        this.pen.translate(p._x, p._y);
-        this._transfromTo.translate(p._x, p._y);
+        this._transformTo.translate(p._x, p._y);
+        this.doTransform();
       }
     }
     this._preoffsetX = e.offsetX;
@@ -182,7 +181,9 @@ class Zcl extends Eventable {
    * @param {Event} e 
    */
   onmouseleftdown(e){
-    this._isclick = true;
+    if( this.models._hover === null ){
+      this._isclick = true;
+    }
   }
 
   /**
@@ -229,14 +230,25 @@ class Zcl extends Eventable {
     }
   }
 
+  /**
+   * @private
+   * @returns {number} time
+   */
   get _getTime(){
     return window.performance?window.performance.timing.navigationStart + window.performance.now():new Date() .getTime();
   }
 
   /**
+   * 把变换矩阵应用到画布
+   */
+  doTransform(){
+    const m = this._transformTo;
+    this.pen.setTransform( m[0],0,0,m[3],m[4],m[5] );
+  }
+
+  /**
    * 临时函数-画一个背景图
-   * 
-   * @param {*} color 
+   * @param {string} color 
    */
   _clearScreen(color = 'rgba(40, 120, 255, 1)') {
     var icvs = this.cvs;
@@ -287,7 +299,6 @@ class Zcl extends Eventable {
 
   /**
    * 分发dom事件
-   * 
    */
   _dispatchEvent(){
     for (const eventname of EventNamesMouse) {
@@ -304,7 +315,10 @@ class Zcl extends Eventable {
     }
   }
 
-  // 重新定义事件，分别处理鼠标按下事件
+  /**
+   * 重新定义事件，分别处理鼠标按下事件
+   * @param {Event} e 
+   */
   onmousedown(e){
     if( e.button === 0 ){
       this.trigger('mouseleftdown', e);
@@ -315,7 +329,10 @@ class Zcl extends Eventable {
     }
   }
 
-  // 重新定义事件，分别处理鼠标抬起事件
+  /**
+   * 重新定义事件，分别处理鼠标抬起事件
+   * @param {Event} e 
+   */
   onmouseup(e){
     if( e.button === 0 ){
       this.trigger('mouseleftup', e);
@@ -350,6 +367,8 @@ class Zclm extends Eventable {
     this._zcl = zcl;
 
     this._focus = null;
+
+    this._hover = null;
   }
 
   add(m) {
@@ -389,11 +408,13 @@ class Zclm extends Eventable {
     for (const m of this._models) {
       if (m.contain && m.contain(cp)) {
         this.parent.candom.style.cursor = "pointer";
+        this._hover = m;
         is = true;
-      } else if (m.contain && !m.contain(cp) && (m instanceof Displayable)) {
-        if (!is) this.parent.candom.style.cursor = "auto";
+        return;
       }
     }
+    this.parent.candom.style.cursor = "auto";
+    this._hover = null;
   }
 
   lastedModel( m ){

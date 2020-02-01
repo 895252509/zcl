@@ -26,24 +26,19 @@ class Displayable extends Eventable {
     this._isFocus = false;
   }
 
-  onmousedown(e) {
-    if (e.button === 0) { //left button
-      this.trigger('focus', e);
-      if( this._isFocus ){
-        this._clicking = true;
-        // TODO
-        this.clickPoint.value = new Shapes.point(e.offsetX, e.offsetY).sub(this._p1 || this._src._p1 || this._src._ps[0]);
-        this.parent.lastedModel(this);
-      }
-    } else if (e.button === 1) { //middle button
-
-    } else if (e.button === 2) { //right button
-
+  onmouseleftdown(e) {
+    this.trigger('focus', e);
+    if( this._isFocus ){
+      this._clicking = true;
+      // TODO
+      this.clickPoint.value = new Shapes.point(e._worldX, e._worldY).sub(this._p1 || this._src._p1 || this._src._ps[0]);
+      this.parent.lastedModel(this);
     }
+
   }
 
   onmousemove(e) {
-    let mp = new Shapes.point(e.offsetX, e.offsetY);
+    let mp = new Shapes.point(e._worldX, e._worldY);
     this._hoverhint = mp;
 
     if (this._clicking && this.move && this._isFocus) {
@@ -55,17 +50,12 @@ class Displayable extends Eventable {
     }
   }
 
-  onmouseup(e) {
+  onmouseleftup(e) {
 
-    if (e.button === 0) { //left button
-      this._clicking = false;
-      this.clickPoint = new Shapes.point();
-      this.trigger('blur', e);
-    } else if (e.button === 1) { //middle button
+    this._clicking = false;
+    this.clickPoint = new Shapes.point();
+    this.trigger('blur', e);
 
-    } else if (e.button === 2) { //right button
-
-    }
   }
 
   onmouseout(e){
@@ -100,7 +90,7 @@ class Displayable extends Eventable {
     // 暂时先忽略所有的dom mouseout事件
     if( e.type === 'mouseout') return false;
 
-    let cp = new Shapes.point(e.offsetX, e.offsetY);
+    let cp = new Shapes.point(e._worldX, e._worldY);
     let isContain = this.contain(cp);
 
     switch( en ){
