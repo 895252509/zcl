@@ -194,6 +194,18 @@ class Zcl extends Eventable {
   }
 
   /**
+   * 鼠标划出画布事件
+   * @param {Event} e 
+   */
+  onmouseout(e){
+    this._preoffsetX = 0;
+    this._preoffsetY = 0;
+    this._preworldX = 0;
+    this._preworldY = 0;
+    this._isclick = false;
+  }
+
+  /**
    * 阻止右键菜单
    * @param {MouseEvent} e 
    */
@@ -234,8 +246,8 @@ class Zcl extends Eventable {
     icvs.fillRect(
       -this.candom.width,
       -this.candom.height,
-      this.candom.width*2,
-      this.candom.height*2);
+      this.candom.width*3,
+      this.candom.height*3);
 
     icvs.strokeStyle = "rgba(255, 255, 255, 1)";
     icvs.lineWidth = 0.8;
@@ -247,9 +259,9 @@ class Zcl extends Eventable {
     var numberX = this.candom.height / pixSizeX;
     var numberY = this.candom.width / pixSizeY;
 
-    for (var i = 0; i < numberX; i++) {
+    for (var i = 0; i <= numberX; i++) {
       if (i % 4 == 0)
-        icvs.strokeStyle = "rgba(255, 255, 255, 0.6)";
+        icvs.strokeStyle = "rgba(255, 255, 255, 0.9)";
       else
         icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
       icvs.beginPath();
@@ -258,7 +270,7 @@ class Zcl extends Eventable {
       icvs.stroke();
     }
 
-    for (var i = 0; i < numberY; i++) {
+    for (var i = 0; i <= numberY; i++) {
       if (i % 4 == 0)
         icvs.strokeStyle = "rgba(255, 255, 255, 0.6)";
       else
