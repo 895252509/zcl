@@ -1,6 +1,6 @@
 let zcl = new Zcl("#can");
 
-for( let i = 0; i < 10000; i++ ){
+for( let i = 0; i < 5000; i++ ){
 
   let x = suport.getRandomInt(0, 450);
   let y = suport.getRandomInt(0, 450);
