@@ -37,3 +37,8 @@ zcl.on("timing$asyn", (e) => {
   document.querySelectorAll("#fps")[0].innerHTML = `FPS:${e.timing.fps}`;
   document.querySelectorAll("#avemillisecond")[0].innerHTML = `平均毫秒数:${e.timing.avemillisecond}ms`;
 });
+
+
+function zclreset() {
+  zcl.resetTransform();
+}
