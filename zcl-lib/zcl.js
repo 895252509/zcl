@@ -247,6 +247,14 @@ class Zcl extends Eventable {
   }
 
   /**
+   * 重置变换
+   */
+  resetTransform(){
+    this._transformTo.reset();
+    this.doTransform();
+  }
+
+  /**
    * 临时函数-画一个背景图
    * @param {string} color 
    */
