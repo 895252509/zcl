@@ -263,11 +263,17 @@ class Zcl extends Eventable {
 
     icvs.save();
     icvs.fillStyle = color;
+
+    // 计算应该清除的范围
+    const size = new S.point(this.candom.width, this.candom.height);
+    const pos = new S.point(0, 0);
+    pos.dotMatrix(this._transformTo.invert());
+    size.dotMatrix(this._transformTo.scaleM.invert());
     icvs.fillRect(
-      -this.candom.width,
-      -this.candom.height,
-      this.candom.width*3,
-      this.candom.height*3);
+      pos._x,
+      pos._y,
+      size._x,
+      size._y);
 
     icvs.strokeStyle = "rgba(255, 255, 255, 1)";
     icvs.lineWidth = 0.8;

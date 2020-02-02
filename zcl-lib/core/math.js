@@ -132,6 +132,28 @@ class Matrix32 extends Array{
     return this;
   }
 
+  get translateM(){
+    let m = new Matrix32();
+    m[0] = 1;
+    m[1] = 0;
+    m[2] = 0;
+    m[3] = 1;
+    m[4] = this[4];
+    m[5] = this[5];
+    return m;
+  }
+
+  get scaleM(){
+    let m = new Matrix32();
+    m[0] = this[0];
+    m[1] = 0;
+    m[2] = 0;
+    m[3] = this[3];
+    m[4] = 0;
+    m[5] = 0;
+    return m;
+  }
+
   get translateX(){
     return this[4];
   }
