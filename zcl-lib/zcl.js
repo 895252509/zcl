@@ -147,7 +147,7 @@ class Zcl extends Eventable {
    */
   onwheel(e){
     // 实现滑动滚轮缩放画面
-    const wheeld =  e.wheelDelta;
+    const wheeld =  e.wheelDelta || e.deltaY;
     const scale = wheeld < 0? 1-this._scaleRate : 1+this._scaleRate;
 
     // 先计算浏览器坐标到画布坐标的变换矩阵
@@ -372,6 +372,10 @@ class Zcl extends Eventable {
   }
 }
 
+/**
+ * 对象管理类
+ * 
+ */
 class Zclm extends Eventable {
   constructor(zcl) {
     super();
