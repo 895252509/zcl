@@ -1,5 +1,6 @@
 class B{
-  constructor(){
+
+  constructor(a){
 
   }
 
@@ -8,9 +9,10 @@ class B{
   }
 }
 
-class A {
+class A extends B{
   f = 1;
   constructor(a, b){
+    super(a);
 
     this._a = this.f;
     this._a = a;
@@ -49,8 +51,6 @@ class C{
 }
 
 Object.prototype.use = function (clas) {
-  const a = new Function();
-  const theConstructor = clas.prototype.constructor.toString();
   function findParam(c, i) {
     const i1 = c.indexOf('(', i);
     const i2 = c.indexOf(')', i);
@@ -88,26 +88,43 @@ Object.prototype.use = function (clas) {
     }
 
   }
-  const create = decodeConstructor(theConstructor);
-  
-  const prePro = this.__proto__;
-  Object.setPrototypeOf(this, clas.prototype);
+  function useClass(that, cla){
+    const clsConstructor = cla.prototype.constructor.toString();
+    const i1 = clsConstructor.indexOf("{");
+    const s1 = clsConstructor.substring(0, i1);
+    const i2 = s1.indexOf('extends');
+    if( i2 >= 0 ){
+      const extendsCls = s1.substring(i2+7).trim();
+      const extendsClss = eval(extendsCls);
+      if( typeof extendsClss === 'undefined'){
+        throw new Error();
+      }
+      useClass(that, extendsClss);
+    }
+    const create = decodeConstructor(clsConstructor);
 
-  const propers = Object.getOwnPropertyNames(clas.prototype);
-  for (const p of propers) {
-    console.log(p);
-    if( p === 'constructor' ) continue;
-    const pp = Object.getOwnPropertyDescriptor(clas.prototype, p);
-    Object.defineProperty(prePro, p, pp);
+    const ss = clsConstructor.replace('\\','');
+  
+    const prePro = that.__proto__;
+    Object.setPrototypeOf(that, cla.prototype);
+
+    const propers = Object.getOwnPropertyNames(cla.prototype);
+    for (const p of propers) {
+      console.log(p);
+      if( p === 'constructor' ) continue;
+      const pp = Object.getOwnPropertyDescriptor(cla.prototype, p);
+      Object.defineProperty(prePro, p, pp);
+    }
+
+    create.call(that,'s','asdasda');
+
+    Object.setPrototypeOf(that, prePro);
+
   }
 
-  create.call(this,'s','asdasda');
+  useClass(this, clas);
 
-
-
-
-  Object.setPrototypeOf(this, prePro);
-
+  
 }
 
 
