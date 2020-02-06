@@ -13,8 +13,13 @@
     padding: 0px;
   }
 
-  .can{
-    margin: 5px 0px 0px 10px;
+  canvas{
+    margin: 10px 0px 0px 10px;
+    display: inline;
+  }
+
+  button{
+    padding: 0px 4px;
   }
 
   #can1{
@@ -42,28 +47,25 @@
   }
   </style>
 </head> 
-<body>
-  <canvas id="can" width="800" height="600" class="can"></canvas>
+<body style="width: 3000px;">
 
   <div id='test' class="div1">
     <span class="info" id="date"></span>
     <span class="info" id="fps"></span>
     <span class="info" id="avemillisecond"></span>
   </div>
+  <canvas id="can" width="800" height="600" class="can"></canvas>
 
-  <!--
-  <script src="app/Snake.js"></script>
-  <script src="app/app.js"></script>
--->
-  <script src="../../zcl-lib/common/suport.js"></script>
-  <script src="../../zcl-lib/core/const.js"></script>
-  <script src="../../zcl-lib/core/math.js"></script>
-
-  <script src="../../zcl-lib/core/shapes.js"></script>
-  <script src="../../zcl-lib/core/eventable.js"></script>
-  <script src="../../zcl-lib/core/displayable.js"></script>
-  <script src="../../zcl-lib/zcl.js"></script>
-
-  <script src="app.js"></script>
 </body>
+<script src="../../zcl-lib/common/suport.js"></script>
+<script src="../../zcl-lib/core/const.js"></script>
+<script src="../../zcl-lib/core/math.js"></script>
+
+<script src="../../zcl-lib/core/shapes.js"></script>
+<script src="../../zcl-lib/core/eventable.js"></script>
+<script src="../../zcl-lib/core/displayable.js"></script>
+<script src="../../zcl-lib/core/layer.js"></script>
+<script src="../../zcl-lib/zcl.js"></script>
+
+<script src="app.js"></script>
 </html>

@@ -4,8 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Home Page</title>
-  <!--
-  <script src="js/lib.js"></script>-->
 
   <style>
   *{
@@ -13,8 +11,13 @@
     padding: 0px;
   }
 
-  .can{
+  canvas{
     margin: 10px 0px 0px 10px;
+    display: inline;
+  }
+
+  button{
+    padding: 0px 4px;
   }
 
   #can1{
@@ -24,11 +27,6 @@
   }
 
   .div1{
-    background-color: white;;
-    width: 400px;
-    height: 100px;
-    margin-top: 10px;
-    display: block;
     margin: 10px 0px 0px 10px;
   }
 
@@ -42,30 +40,24 @@
   }
   </style>
 </head>
-<body>
-  <canvas id="can" width="800" height="400" class="can"></canvas>
-  <button onclick="zclreset();">reset</button>
+<body style="width: 3000px;">
   <div id='test' class="div1">
     <span class="info" id="date"></span>
     <span class="info" id="fps"></span>
     <span class="info" id="avemillisecond"></span>
+    <button onclick="zclreset();">reset</button>
   </div>
-
-  <!--
-  <script src="app/Snake.js"></script>
-  <script src="app/app.js"></script>
--->
-  <script src="../../zcl-lib/common/suport.js"></script>
-  <script src="../../zcl-lib/core/const.js"></script>
-  <script src="../../zcl-lib/core/math.js"></script>
-
-  <script src="../../zcl-lib/core/shapes.js"></script>
-  <script src="../../zcl-lib/core/eventable.js"></script>
-  <script src="../../zcl-lib/core/displayable.js"></script>
-  <script src="../../zcl-lib/zcl.js"></script>
-
-  <script src="app.js"></script>
-
-  <!-- <script src="test.js"></script> -->
+  <canvas id="can" width="800" height="400" class="can"></canvas>
 </body>
+<script src="../../zcl-lib/common/suport.js"></script>
+<script src="../../zcl-lib/core/const.js"></script>
+<script src="../../zcl-lib/core/math.js"></script>
+
+<script src="../../zcl-lib/core/shapes.js"></script>
+<script src="../../zcl-lib/core/eventable.js"></script>
+<script src="../../zcl-lib/core/displayable.js"></script>
+<script src="../../zcl-lib/core/layer.js"></script>
+<script src="../../zcl-lib/zcl.js"></script>
+
+<script src="app.js"></script>
 </html>

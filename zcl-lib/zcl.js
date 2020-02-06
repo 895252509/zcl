@@ -32,7 +32,7 @@ class Zcl extends Eventable {
     this.models = new Zclm(this);
     super.addChild(this.models);
 
-    this.layerManager = new ZcLayer(this.cvs, this.models);
+    this.layerManager = new ZcLayers(this.cvs, this.models);
 
     // 每次缩放的缩放比率
     this._scaleRate = 0.02;
@@ -45,10 +45,6 @@ class Zcl extends Eventable {
     // 上一次鼠标位置
     this._preoffsetX = 0;
     this._preoffsetY = 0;
-
-    // 上一次鼠标位置
-    this._preworldX = 0;
-    this._preworldY = 0;
 
     this._layered = true;
 
@@ -75,12 +71,9 @@ class Zcl extends Eventable {
   }
 
   start() {
-
     this.timing.firstframetime =  this._getTime;
     this.timing.framestartmillisecond = this.timing.firstframetime;
-
     this.frame();
-
   }
 
   frame() {
@@ -88,16 +81,8 @@ class Zcl extends Eventable {
     this.timing.framestartmillisecond = this._getTime;
     this.trigger("beforeframe", this);
 
-    this._clearScreen("rgba(152, 223, 255, 1)");
-
     this.layerManager.show();
 
-    // for (const m of this.models._models) {
-    //   if ((m instanceof Displayable) && (m.draw)) {
-    //     m.draw(this.cvs);
-    //   }
-    // }
-    
     this.trigger( "afterframe", this );
 
     const currframesecond = Math.trunc(this._getTime / 1000);
@@ -137,12 +122,8 @@ class Zcl extends Eventable {
       p.dotMatrix(this._transformTo.invert());
       e._worldX = p._x;
       e._worldY = p._y;
-      // 如果是鼠标移动事件，就计算距离量
-      // if( typeof e.movementX === 'undefined' &&
-      //   typeof e.movementY === 'undefined'){
       e._movedX = e.offsetX - this._preoffsetX;
       e._movedY = e.offsetY - this._preoffsetY;
-      // }
     }
     return this;
   }
@@ -178,8 +159,6 @@ class Zcl extends Eventable {
     }
     this._preoffsetX = e.offsetX;
     this._preoffsetY = e.offsetY;
-    this._preworldX = e._worldX;
-    this._preworldY = e._worldY;
   }
 
   /**
@@ -207,8 +186,6 @@ class Zcl extends Eventable {
   onmouseout(e){
     this._preoffsetX = 0;
     this._preoffsetY = 0;
-    this._preworldX = 0;
-    this._preworldY = 0;
     this._isclick = false;
   }
 
@@ -250,8 +227,6 @@ class Zcl extends Eventable {
   doTransform(){
     this.layerManager._transformTo = this._transformTo;
     this.layerManager.doTransform();
-    // const m = this._transformTo;
-    // this.pen.setTransform( m[0],0,0,m[3],m[4],m[5] );
   }
 
   /**
@@ -282,7 +257,7 @@ class Zcl extends Eventable {
       pos._y,
       size._x,
       size._y);
-
+      
     icvs.strokeStyle = "rgba(255, 255, 255, 1)";
     icvs.lineWidth = 0.8;
     icvs.setLineDash([6, 2, 6, 2]);
@@ -453,139 +428,3 @@ class Zclm extends Eventable {
   }
 }
 
-/**
- * 分层绘制管理器
- * 
- * 实现分层绘制，提高绘制效率等
- * 
- */
-class ZcLayers extends Eventable{
-  _cvs = null;
-  _zm = null;
-  constructor( cvs = null, zm = null ){
-    super();
-
-    // 原始的画布
-    this._cvs = cvs;
-
-    // 对象管理器
-    this._zm = zm;
-
-    // 层管理数组
-    this._layers = [];
-
-    // 变换矩阵
-    this._transformTo = new Matrix32();
-
-    this.createLayer();
-  }
-
-  show(){
-
-    if( this._layers[0] === null ) this.createLayer();
-
-    for (const m of this._zm._models) {
-      if ((m instanceof Displayable) && (m.draw)) {
-        m.draw(this._layers[0]);
-      }
-    }
-
-    for (const lay of this._layers) {
-      this._cvs.drawImage(lay.canvas, 0, 0);
-    }
-  }
-
-  doTransform(){
-    for (const lay of this._layers) {
-      lay._transformTo = this._transformTo;
-      lay.doTransform();
-    }
-  }
-
-  /**
-   * 基于原始画布创建一个相同大小的分层画布
-   * 
-   */
-  createLayer(){
-    const lay = new ZcLayer();
-    lay.width = this.width;
-    lay.height = this.height;
-    this._layers.push(lay);
-    return lay;
-  }
-
-  /**
-   * 获取原始画布的高度
-   * @getter
-   * @returns {number} height
-   */
-  get height(){
-    if( this._cvs !== null ){
-      return this._cvs.canvas.offsetHeight;
-    }
-  }
-
-  /**
-   * 获取原始画布的宽度
-   * @getter
-   * @returns {number} widht
-   */
-  get width(){
-    if( this._cvs !== null ){
-      return this._cvs.canvas.offsetWidth;
-    }
-  }
-}
-
-class ZcLayer extends Eventable{
-  constructor() {
-    super();
-
-    this._dom = document.createElement("canvas");
-
-    this._ctx = null;
-
-    this._transformTo = new Matrix32();
-  }
-
-  doTransform(){
-    const m = this._transformTo;
-    this._ctx.setTransform( m[0],0,0,m[3],m[4],m[5] );
-  }
-
-  clear(){
-    // 计算应该清除的范围
-    const size = new S.point(this.width, this.height);
-    const pos = new S.point(0, 0);
-    pos.dotMatrix(this._transformTo.invert());
-    size.dotMatrix(this._transformTo.scaleM.invert());
-    this._ctx.clearRect(
-      pos._x,
-      pos._y,
-      size._x,
-      size._y);
-  }
-
-  get ctx(){
-    if( this._ctx === null ){
-      this._ctx = this._dom.getContext('2d');
-    }
-    return this._ctx;
-  }
-
-  set height(x){
-    this._dom.height = x;
-  }
-
-  set width(x){
-    this._dom.width = x;
-  }
-
-  get height(){
-    return this._dom.offsetHeight;
-  }
-
-  get width(){
-    return this._dom.offsetWidth;
-  }
-}
