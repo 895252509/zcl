@@ -160,12 +160,19 @@ class Eventable {
 
   /**
    * 绑定对象自己的事件
+   * @summary 只要是“on”开头的都会作为事件绑定
+   * @private
    */
   _bindEvent() {
-    for (const en of EventNames) {
-      if (this[`on${en}`]) {
-        this.on(en, this[`on${en}`].bind(this));
-      }
+    let proto = this.__proto__;
+    while( typeof proto !== 'undefined' && proto !== null){
+      Object.getOwnPropertyNames(proto)
+      .filter( v => v.startsWith('on') && v !== 'on' && v !== 'once' )
+      .filter( v => typeof this[v] === 'function' )
+      .map( v => {
+        this.on(v.substring(2), this[v].bind(this));
+      });
+      proto = proto.__proto__;
     }
   }
 
