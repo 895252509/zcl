@@ -48,6 +48,8 @@ class Zcl extends Eventable {
     this._preworldX = 0;
     this._preworldY = 0;
 
+    this._layered = true;
+
     // 初始化操作
     this.init();
   }
@@ -443,4 +445,17 @@ class Zclm extends Eventable {
       this._models.push(m);
     }
   }
+}
+
+class ZcLayer extends Eventable{
+  _cvs = null;
+  _zm = null;
+  constructor( cvs = null, zm = null ){
+    super();
+
+    this._cvs = cvs;
+
+    this._zm = zm;
+  }
+
 }
