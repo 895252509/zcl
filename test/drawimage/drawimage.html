@@ -4,19 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+      #cctent{
+        position: relative;
+      }
+      canvas{
+        position: absolute;
+      }
+    </style>
 </head>
 <body>
+  <div id="cctent">
     <canvas id="cvs" width="400" height="400"></canvas>
+  </div>
 </body>
 
 <script>
 
 const ctx = document.getElementById("cvs").getContext("2d");
+const cctent = document.getElementById("cctent");
 
 const starttime = window.performance.now();
 
 function frame(){
   ctx.clearRect(0,0,400,400);
+  cctent.innerHTML= "";
   const arr = [];
 
   for (let i = 0; i < 100; i++) {
@@ -36,7 +48,8 @@ function frame(){
 
   const time1 = window.performance.now();
   for (const cvs of arr) {
-    ctx.drawImage(cvs,0,0);
+    //ctx.drawImage(cvs,0,0);
+    cctent.appendChild(cvs);
   }
   const time2 = window.performance.now() - time1;
   console.log(time2);
