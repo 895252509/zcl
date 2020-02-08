@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="cvs" width="400" height="400"></canvas>
+</body>
+
+<script>
+
+const ctx = document.getElementById("cvs").getContext("2d");
+
+const starttime = window.performance.now();
+
+function frame(){
+  ctx.clearRect(0,0,400,400);
+  const arr = [];
+
+  for (let i = 0; i < 100; i++) {
+    const cacheCvs = document.createElement("canvas");
+    cacheCvs.width = 400;
+    cacheCvs.height = 400;
+    const cacheCtx = cacheCvs.getContext("2d");
+
+    cacheCtx.beginPath();
+    cacheCtx.moveTo(getRandom(0,400),getRandom(0,400));
+    cacheCtx.lineTo(getRandom(0,400),getRandom(0,400));
+    cacheCtx.lineTo(getRandom(0,400),getRandom(0,400));
+    cacheCtx.closePath();
+    cacheCtx.stroke();
+    arr.push(cacheCvs);
+  }
+
+  const time1 = window.performance.now();
+  for (const cvs of arr) {
+    ctx.drawImage(cvs,0,0);
+  }
+  const time2 = window.performance.now() - time1;
+  console.log(time2);
+  window.requestAnimationFrame(frame)
+}
+
+frame();
+
+
+function getRandom(a , b){
+  return Math.random()*(b-a)+a;
+}
+</script>
+
+</html>
