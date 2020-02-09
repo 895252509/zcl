@@ -24,9 +24,7 @@ class Zcl extends Eventable {
       avemillisecond : 0
     }
 
-    // 获取保存canvas的dom对象
-    this.candom = document.querySelector(params);
-    this.cvs = this.candom.getContext('2d',{ alpha : true });
+    this._initContainer(params);
 
     // 创建model管理器
     this.models = new Zclm(this);
@@ -46,7 +44,10 @@ class Zcl extends Eventable {
     this._preoffsetX = 0;
     this._preoffsetY = 0;
 
+    // 是否启用分层
     this._layered = true;
+    // 通过为每一层分别创建画布dom，设置绝对定位重叠来实现分层
+    this._layer_usemulitdom = true;
 
     // 初始化操作
     this.init();
@@ -309,6 +310,40 @@ class Zcl extends Eventable {
         // TODO
 
       });
+    }
+  }
+
+  /**
+   * 初始化画布容器
+   * @param {string/HTMLElement} dom 
+   */
+  _initContainer( dom ){
+    if( typeof dom !== 'string' && !(dom instanceof HTMLElement)){
+      throw new Error('init error');
+    }
+    const tdom = dom instanceof HTMLElement? dom : document.querySelector(dom);
+    if( tdom.nodeName.toUpperCase() === 'CANVAS' ){
+      this.container = tdom.parentNode;
+      this.candom = tdom;
+      this.cvs = this.candom.getContext('2d',{ alpha : true });
+      // 如果给定的dom是一个canvas，那么就不使用分层dom。
+      this._layer_usemulitdom = false;
+    }else{
+      // 如果给定的dom不是一个canvas，通常是一个div容器，那么就创建一个画布dom添加进去
+      this.container = tdom;
+      this.candom = document.createElement("canvas");
+      this.container.appendChild(this.candom);
+      this.candom.width = tdom.clientWidth;
+      this.candom.height = tdom.clientHeight;
+      // 把这个画布放在最上面，用来接收dom消息
+      this.candom.style.zIndex = 1000;
+      this.cvs = this.candom.getContext('2d',{ alpha : true });
+      this.container.style.position = 'relative';
+      this.candom.style.position = 'absolute';
+      this.candom.style.top = '0';
+      this.candom.style.left = '0';
+      this.candom.style.padding = '0';
+      this.candom.style.margin = '0';
     }
   }
 
