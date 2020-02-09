@@ -35,9 +35,11 @@ class Zcl extends Eventable {
     this.models = new Zclm(this);
     super.addChild(this.models);
 
-    this.layerManager = new ZcLayers(this,{
-      usemulitdom: this._layer_usemulitdom
-    });
+    if( this._layered ){
+      this.layerManager = new ZcLayers(this,{
+        usemulitdom: this._layer_usemulitdom
+      });
+    }
 
     // 每次缩放的缩放比率
     this._scaleRate = 0.02;
@@ -84,7 +86,16 @@ class Zcl extends Eventable {
     this.timing.framestartmillisecond = this._getTime;
     this.trigger("beforeframe", this);
 
-    this.layerManager.show();
+    if( this._layered ){
+      this.layerManager.show();
+    }else{
+      this._clearScreen("rgba(40, 120, 255, 1)");
+      for (const m of this.models._models) {
+        if ((m instanceof Displayable) && (m.draw)) {
+          m.draw(this.cvs);
+        }
+      }
+    }
 
     this.trigger( "afterframe", this );
 
@@ -228,8 +239,13 @@ class Zcl extends Eventable {
    * 把变换矩阵应用到画布
    */
   doTransform(){
-    this.layerManager._transformTo = this._transformTo;
-    this.layerManager.doTransform();
+    if( this._layered ){
+      this.layerManager._transformTo = this._transformTo;
+      this.layerManager.doTransform();
+    }else{
+      const m = this._transformTo;
+      this.cvs.setTransform( m[0],0,0,m[3],m[4],m[5] );
+    }
   }
 
   /**
