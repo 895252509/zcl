@@ -24,13 +24,20 @@ class Zcl extends Eventable {
       avemillisecond : 0
     }
 
+    // 是否启用分层
+    this._layered = true;
+    // 通过为每一层分别创建画布dom，设置绝对定位重叠来实现分层
+    this._layer_usemulitdom = true;
+
     this._initContainer(params);
 
     // 创建model管理器
     this.models = new Zclm(this);
     super.addChild(this.models);
 
-    this.layerManager = new ZcLayers(this.cvs, this.models);
+    this.layerManager = new ZcLayers(this,{
+      usemulitdom: this._layer_usemulitdom
+    });
 
     // 每次缩放的缩放比率
     this._scaleRate = 0.02;
@@ -43,11 +50,6 @@ class Zcl extends Eventable {
     // 上一次鼠标位置
     this._preoffsetX = 0;
     this._preoffsetY = 0;
-
-    // 是否启用分层
-    this._layered = true;
-    // 通过为每一层分别创建画布dom，设置绝对定位重叠来实现分层
-    this._layer_usemulitdom = true;
 
     // 初始化操作
     this.init();

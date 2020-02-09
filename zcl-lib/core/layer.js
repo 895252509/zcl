@@ -6,14 +6,21 @@
  * 
  */
 class ZcLayers extends Eventable{
-  constructor( cvs = null, zm = null ){
+  constructor( zcl, { 
+    usemulitdom
+   } ){
     super();
 
+    this._usermulitdom = usemulitdom || true;
+
+    // zcl
+    this.zcl = zcl;
+
     // 原始的画布
-    this._cvs = cvs;
+    this._cvs = zcl.cvs;
 
     // 对象管理器
-    this._zm = zm;
+    this._zm = zcl.models;
 
     // 层管理数组
     this._layers = [];
@@ -85,7 +92,9 @@ class ZcLayers extends Eventable{
 
     for (const lay of this._layers) {
       lay.show(this._zm);
-      this._cvs.drawImage(lay.dom, 0, 0);
+      if( !this._usermulitdom ){
+        this._cvs.drawImage(lay.dom, 0, 0);
+      }
     }
   }
 
@@ -101,10 +110,24 @@ class ZcLayers extends Eventable{
    * 
    */
   _createLayer(zindex){
+    // 创建一个层对象，设置宽高
     const lay = new ZcLayer(zindex);
     lay.width = this.width;
     lay.height = this.height;
 
+    const laydom = lay.dom;
+
+    // 设置新建层的zindex，限定其不能大于1000，因为1000在最上面用来接收dom事件
+    let zIndex;
+    if( typeof zindex === 'undefined' ){
+      zIndex = 0.0;
+    }else{
+      zIndex = zindex;
+    }
+    if( zIndex >= 1000 ) zIndex = 999;
+    laydom.style.zIndex = zIndex;
+
+    // 在添加到数组的时候就排好顺序。
     const ll = this._layers.length;
     for (let index = 0; index < ll; index++) {
       const el = this._layers[index];
@@ -116,8 +139,19 @@ class ZcLayers extends Eventable{
     if( this._layers.length === ll ){
       this._layers.push(lay);
     }
-    
-    document.body.appendChild(lay.dom);
+
+    // 如果使用dom分层的话，就把该层dom添加到container中
+    if( this._usermulitdom ){
+      laydom.style.position = "absolute";
+      laydom.style.top = '0';
+      laydom.style.left = '0';
+      laydom.style.padding = '0';
+      laydom.style.margin = '0';
+      this.zcl.container.appendChild(laydom);
+    }else{
+      document.body.appendChild(laydom);
+    }
+
     return lay;
   }
 
