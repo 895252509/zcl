@@ -26,10 +26,17 @@
     left: 0px;
   }
 
+  #container{
+    margin: 10px 0px 0px 10px;
+    width: 800px;
+    height: 400px;
+  }
+
   .div1{
     margin: 10px 0px 0px 10px;
     background-color: transparent;
     position: fixed;
+    z-index: 99999;
   }
 
   .info{
@@ -49,6 +56,7 @@
     <span class="info" id="avemillisecond"></span>
     <button onclick="zclreset();">reset</button>
   </div>
+  <div id="container"></div>
   <canvas id="can" width="800" height="400" class="can"></canvas>
 </body>
 <script src="../../zcl-lib/common/suport.js"></script>

@@ -1,4 +1,4 @@
-let zcl = new Zcl("#can");
+let zcl = new Zcl("#container");
 
 let re = new Rectangle(new Shapes.point(300, 20), new Shapes.point(100, 100));
 re.on("click", function(e) {
