@@ -436,17 +436,17 @@ class Zclm extends Eventable {
 
     const parent = this;
 
-    m.on('focus', function(e){
-      if( !parent._focus ){
-        parent._focus = m;
-        m._isFocus = true;
-      }
-    })
+    // m.on('focus', function(e){
+    //   if( !parent._focus ){
+    //     parent._focus = m;
+    //     m._isFocus = true;
+    //   }
+    // })
 
-    m.on('blur', function(e){
-      parent._focus = null;
-      m._isFocus = false;
-    });
+    // m.on('blur', function(e){
+    //   parent._focus = null;
+    //   m._isFocus = false;
+    // });
   }
 
   /**
@@ -461,23 +461,25 @@ class Zclm extends Eventable {
     let is = false;
     for (const m of this._models) {
       if (m.contain && m.contain(cp)) {
-        this.parent.candom.style.cursor = "pointer";
+        //this.parent.candom.style.cursor = "pointer";
+        this._zcl.candom.style.cursor = "pointer";
         this._hover = m;
         is = true;
         return;
       }
     }
-    this.parent.candom.style.cursor = "auto";
+    //this.parent.candom.style.cursor = "auto";
+    this._zcl.candom.style.cursor = "auto";
     this._hover = null;
   }
 
-  lastedModel( m ){
-    const moduls = this._models;
-    const index = moduls.findIndex( v => v === m );
-    if( index >= 0 && index < moduls.length - 1){
-      this._models = moduls.filter( v => v !== m);
-      this._models.push(m);
-    }
-  }
+  // lastedModel( m ){
+  //   const moduls = this._models;
+  //   const index = moduls.findIndex( v => v === m );
+  //   if( index >= 0 && index < moduls.length - 1){
+  //     this._models = moduls.filter( v => v !== m);
+  //     this._models.push(m);
+  //   }
+  // }
 }
 
