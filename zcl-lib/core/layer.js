@@ -20,7 +20,7 @@ class ZcLayers extends Eventable{
     this._cvs = zcl.cvs;
 
     // 对象管理器
-    this._zm = zcl.models;
+    //this._zm = zcl.models;
 
     // 层管理数组
     this._layers = [];
@@ -87,11 +87,29 @@ class ZcLayers extends Eventable{
 
   }
 
+  add(m){
+    if(! m instanceof Displayable ) return;
+    this._layers[1].addChild(m);
+
+    const parent = this;
+    m.on('focus', function(e){
+      if( !parent._focus ){
+        parent._focus = m;
+        m._isFocus = true;
+      }
+    })
+
+    m.on('blur', function(e){
+      parent._focus = null;
+      m._isFocus = false;
+    });
+  }
+
   show(){
     this._cvs.clearRect(0, 0, this.width, this.width);
 
     for (const lay of this._layers) {
-      lay.show(this._zm);
+      lay.show();
       if( !this._usermulitdom ){
         this._cvs.drawImage(lay.dom, 0, 0);
       }
@@ -201,7 +219,7 @@ class ZcLayer extends Eventable{
 
   }
 
-  show(models){
+  show(){
     if( !this._needupdate ) return;
     this._needupdate = false;
 
@@ -210,7 +228,14 @@ class ZcLayer extends Eventable{
     
     if( this._useCreated ) return;
     this._needupdate = true;
-    for (const m of models._models) {
+
+    // for (const m of models._models) {
+    //   if ((m instanceof Displayable) && (m.draw)) {
+    //     m.draw(this.ctx);
+    //   }
+    // }
+
+    for (const m of this.childen) {
       if ((m instanceof Displayable) && (m.draw)) {
         m.draw(this.ctx);
       }

@@ -32,15 +32,15 @@ class Zcl extends Eventable {
     this._initContainer(params);
 
     // 创建model管理器
-    this.models = new Zclm(this);
-    super.addChild(this.models);
+    // this.models = new Zclm(this);
+    // super.addChild(this.models);
 
-    if( this._layered ){
-      this.layerManager = new ZcLayers(this,{
-        usemulitdom: this._layer_usemulitdom
-      });
-      this.addChild( this.layerManager );
-    }
+    //if( this._layered ){
+    this.layerManager = new ZcLayers(this,{
+      usemulitdom: this._layer_usemulitdom
+    });
+    this.addChild( this.layerManager );
+   //}
 
     // 每次缩放的缩放比率
     this._scaleRate = 0.02;
@@ -62,8 +62,8 @@ class Zcl extends Eventable {
     if (!(m instanceof Displayable))
       return;
 
-    this.models.add(m);
-
+    // this.models.add(m);
+    this.layerManager.add(m);
   }
 
   init() {
@@ -87,16 +87,16 @@ class Zcl extends Eventable {
     this.timing.framestartmillisecond = this._getTime;
     this.trigger("beforeframe", this);
 
-    if( this._layered ){
-      this.layerManager.show();
-    }else{
-      this._clearScreen("rgba(40, 120, 255, 1)");
-      for (const m of this.models._models) {
-        if ((m instanceof Displayable) && (m.draw)) {
-          m.draw(this.cvs);
-        }
-      }
-    }
+    //if( this._layered ){
+    this.layerManager.show();
+    //}else{
+      // this._clearScreen("rgba(40, 120, 255, 1)");
+      // for (const m of this.models._models) {
+      //   if ((m instanceof Displayable) && (m.draw)) {
+      //     m.draw(this.cvs);
+      //   }
+      // }
+   // }
 
     this.trigger( "afterframe", this );
 
@@ -181,7 +181,7 @@ class Zcl extends Eventable {
    * @param {Event} e 
    */
   onmouseleftdown(e){
-    if( this.models._hover === null ){
+    if( this.layerManager._hover === null ){
       this._isclick = true;
     }
   }
@@ -240,13 +240,6 @@ class Zcl extends Eventable {
    * 把变换矩阵应用到画布
    */
   ontransform(e){
-    // if( this._layered ){
-    //   this.layerManager._transformTo = this._transformTo;
-    //   this.layerManager.doTransform();
-    // }else{
-    //   const m = this._transformTo;
-    //   this.cvs.setTransform( m[0],0,0,m[3],m[4],m[5] );
-    // }
     const m = e;
     this.cvs.setTransform( m[0],0,0,m[3],m[4],m[5] );
   }
@@ -410,6 +403,8 @@ class Zcl extends Eventable {
     return this.cvs;
   }
 }
+
+
 
 /**
  * 对象管理类
