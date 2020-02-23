@@ -19,9 +19,6 @@ class ZcLayers extends Eventable{
     // 原始的画布
     this._cvs = zcl.cvs;
 
-    // 对象管理器
-    //this._zm = zcl.models;
-
     // 层管理数组
     this._layers = [];
 
@@ -90,19 +87,6 @@ class ZcLayers extends Eventable{
   add(m){
     if(! m instanceof Displayable ) return;
     this._layers[1].addChild(m);
-
-    const parent = this;
-    m.on('focus', function(e){
-      if( !parent._focus ){
-        parent._focus = m;
-        m._isFocus = true;
-      }
-    })
-
-    m.on('blur', function(e){
-      parent._focus = null;
-      m._isFocus = false;
-    });
   }
 
   show(){
@@ -174,6 +158,21 @@ class ZcLayers extends Eventable{
     return lay;
   }
 
+  onmousemove(e){
+    let cp = new Shapes.point(e._worldX, e._worldY);
+    for (const lay of this.childen) {
+      for (const m of lay.childen) {
+        if( m.contain(cp) ){
+          this.zcl.candom.style.cursor = "pointer";
+          this._hover = m;
+          return;
+        }
+      }
+    }
+    this.zcl.candom.style.cursor = "auto";
+    this._hover = null;
+  }
+
   /**
    * 获取原始画布的高度
    * @getter
@@ -228,12 +227,6 @@ class ZcLayer extends Eventable{
     
     if( this._useCreated ) return;
     this._needupdate = true;
-
-    // for (const m of models._models) {
-    //   if ((m instanceof Displayable) && (m.draw)) {
-    //     m.draw(this.ctx);
-    //   }
-    // }
 
     for (const m of this.childen) {
       if ((m instanceof Displayable) && (m.draw)) {

@@ -31,16 +31,10 @@ class Zcl extends Eventable {
 
     this._initContainer(params);
 
-    // 创建model管理器
-    // this.models = new Zclm(this);
-    // super.addChild(this.models);
-
-    //if( this._layered ){
     this.layerManager = new ZcLayers(this,{
       usemulitdom: this._layer_usemulitdom
     });
     this.addChild( this.layerManager );
-   //}
 
     // 每次缩放的缩放比率
     this._scaleRate = 0.02;
@@ -87,16 +81,7 @@ class Zcl extends Eventable {
     this.timing.framestartmillisecond = this._getTime;
     this.trigger("beforeframe", this);
 
-    //if( this._layered ){
     this.layerManager.show();
-    //}else{
-      // this._clearScreen("rgba(40, 120, 255, 1)");
-      // for (const m of this.models._models) {
-      //   if ((m instanceof Displayable) && (m.draw)) {
-      //     m.draw(this.cvs);
-      //   }
-      // }
-   // }
 
     this.trigger( "afterframe", this );
 
@@ -174,6 +159,8 @@ class Zcl extends Eventable {
     }
     this._preoffsetX = e.offsetX;
     this._preoffsetY = e.offsetY;
+
+
   }
 
   /**
@@ -404,80 +391,63 @@ class Zcl extends Eventable {
   }
 }
 
+// /**
+//  * 对象管理类
+//  * 
+//  */
+// class Zclm extends Eventable {
+//   constructor(zcl) {
+//     super();
 
+//     this._models = [];
 
-/**
- * 对象管理类
- * 
- */
-class Zclm extends Eventable {
-  constructor(zcl) {
-    super();
+//     this._zcl = zcl;
 
-    this._models = [];
+//     this._focus = null;
 
-    this._zcl = zcl;
+//     this._hover = null;
+//   }
 
-    this._focus = null;
+//   add(m) {
 
-    this._hover = null;
-  }
+//     if (!(m instanceof Displayable))
+//       return;
 
-  add(m) {
-
-    if (!(m instanceof Displayable))
-      return;
-
-    this.addChild(m);
+//     this.addChild(m);
     
-    this._models.push(m);
+//     this._models.push(m);
 
-    const parent = this;
+//   }
 
-    // m.on('focus', function(e){
-    //   if( !parent._focus ){
-    //     parent._focus = m;
-    //     m._isFocus = true;
-    //   }
-    // })
+//   /**
+//    * 响应鼠标移动事件
+//    *  
+//    * 1. 设置给模型对象设置鼠标划过效果
+//    * ~2. 判断鼠标划过状态，触发鼠标离开事件
+//    * 
+//    */
+//   onmousemove(e){
+//     let cp = new Shapes.point(e._worldX, e._worldY);
+//     let is = false;
+//     for (const m of this._models) {
+//       if (m.contain && m.contain(cp)) {
+//         this._zcl.candom.style.cursor = "pointer";
+//         this._hover = m;
+//         is = true;
+//         return;
+//       }
+//     }
+//     this._zcl.candom.style.cursor = "auto";
+//     this._hover = null;
+//   }
 
-    // m.on('blur', function(e){
-    //   parent._focus = null;
-    //   m._isFocus = false;
-    // });
-  }
-
-  /**
-   * 响应鼠标移动事件
-   *  
-   * 1. 设置给模型对象设置鼠标划过效果
-   * ~2. 判断鼠标划过状态，触发鼠标离开事件
-   * 
-   */
-  onmousemove(e){
-    let cp = new Shapes.point(e._worldX, e._worldY);
-    let is = false;
-    for (const m of this._models) {
-      if (m.contain && m.contain(cp)) {
-        //this.parent.candom.style.cursor = "pointer";
-        this._zcl.candom.style.cursor = "pointer";
-        this._hover = m;
-        is = true;
-        return;
-      }
-    }
-    //this.parent.candom.style.cursor = "auto";
-    this._zcl.candom.style.cursor = "auto";
-    this._hover = null;
-  }
-
-  // lastedModel( m ){
-  //   const moduls = this._models;
-  //   const index = moduls.findIndex( v => v === m );
-  //   if( index >= 0 && index < moduls.length - 1){
-  //     this._models = moduls.filter( v => v !== m);
-  //     this._models.push(m);
-  //   }
-  // }
-}
+//   lastedModel( m ){
+//     const moduls = this._models;
+//     const index = moduls.findIndex( v => v === m );
+//     if( index >= 0 && index < moduls.length - 1){
+//       this._models = moduls.filter( v => v !== m);
+//       this._models.push(m);
+//     }
+//   }
+// }
 
