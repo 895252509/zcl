@@ -98,13 +98,6 @@ class ZcLayers extends Eventable{
     }
   }
 
-  doTransform(){
-    for (const lay of this._layers) {
-      lay._transformTo = this._transformTo;
-      lay.doTransform();
-    }
-  }
-
   /**
    * 基于原始画布创建一个相同大小的分层画布
    * 
@@ -112,6 +105,8 @@ class ZcLayers extends Eventable{
   _createLayer(zindex){
     // 创建一个层对象，设置宽高
     const lay = new ZcLayer(zindex);
+    this.addChild(lay);
+
     lay.width = this.width;
     lay.height = this.height;
 
@@ -222,8 +217,9 @@ class ZcLayer extends Eventable{
     }
   }
 
-  doTransform(){
-    const m = this._transformTo;
+  ontransform(e){
+    const m = e;
+    this._transformTo = e;
     this.ctx.setTransform( m[0],0,0,m[3],m[4],m[5] );
     this._needupdate = true;
   }

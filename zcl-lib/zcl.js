@@ -39,6 +39,7 @@ class Zcl extends Eventable {
       this.layerManager = new ZcLayers(this,{
         usemulitdom: this._layer_usemulitdom
       });
+      this.addChild( this.layerManager );
     }
 
     // 每次缩放的缩放比率
@@ -154,7 +155,7 @@ class Zcl extends Eventable {
     // 先计算浏览器坐标到画布坐标的变换矩阵
     this._transformTo.scale(scale, scale);
     // 缩放全局画布
-    this.doTransform();
+    this.trigger("transform", this._transformTo);
   }
 
   /**
@@ -168,7 +169,7 @@ class Zcl extends Eventable {
       const p = new S.point(e._movedX, e._movedY);
       if( p._x !== 0 || p._y !== 0 ){
         this._transformTo.translate(p._x, p._y);
-        this.doTransform();
+        this.trigger("transform", this._transformTo);
       }
     }
     this._preoffsetX = e.offsetX;
@@ -238,14 +239,16 @@ class Zcl extends Eventable {
   /**
    * 把变换矩阵应用到画布
    */
-  doTransform(){
-    if( this._layered ){
-      this.layerManager._transformTo = this._transformTo;
-      this.layerManager.doTransform();
-    }else{
-      const m = this._transformTo;
-      this.cvs.setTransform( m[0],0,0,m[3],m[4],m[5] );
-    }
+  ontransform(e){
+    // if( this._layered ){
+    //   this.layerManager._transformTo = this._transformTo;
+    //   this.layerManager.doTransform();
+    // }else{
+    //   const m = this._transformTo;
+    //   this.cvs.setTransform( m[0],0,0,m[3],m[4],m[5] );
+    // }
+    const m = e;
+    this.cvs.setTransform( m[0],0,0,m[3],m[4],m[5] );
   }
 
   /**
@@ -253,7 +256,7 @@ class Zcl extends Eventable {
    */
   resetTransform(){
     this._transformTo.reset();
-    this.doTransform();
+    this.trigger("transform", this._transformTo);
   }
 
   /**
