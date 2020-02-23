@@ -27,7 +27,7 @@ class Zcl extends Eventable {
     // 是否启用分层
     this._layered = true;
     // 通过为每一层分别创建画布dom，设置绝对定位重叠来实现分层
-    this._layer_usemulitdom = true;
+    this._layer_usemulitdom = false;
 
     // this._initContainer(params);
 
@@ -65,7 +65,7 @@ class Zcl extends Eventable {
     this.timing.framestartmillisecond = this._getTime;
     this.trigger("beforeframe", this);
 
-    this.layerManager.show();
+    this.layerManager.trigger('show', {});
 
     this.trigger( "afterframe", this );
 
@@ -105,6 +105,13 @@ class Zcl extends Eventable {
    */
   get _getTime(){
     return window.performance?window.performance.timing.navigationStart + window.performance.now():new Date() .getTime();
+  }
+
+  /**
+   * @returns {ZcLayers} layerManager
+   */
+  get layer(){
+    return this.layerManager;
   }
 
 }

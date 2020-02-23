@@ -66,7 +66,7 @@ class Displayable extends Eventable {
   /**
    * @interface
    */
-  draw() {
+  ondraw(e) {
 
   }
 
@@ -108,6 +108,7 @@ class Displayable extends Eventable {
         }
         return isContain;
       case 'mouseout':
+      case 'draw':
         return true;
       default:
         return isContain;
@@ -147,9 +148,9 @@ class Polygon extends Displayable {
     return this;
   }
 
-  draw(ctx) {
+  ondraw(e) {
     let correct = 0.5;
-
+    const ctx = e.ctx;
     ctx.save();
     ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
 
@@ -187,7 +188,8 @@ class Rectangle extends Displayable {
     this.style;
   }
 
-  draw(ctx) {
+  ondraw(e) {
+    const ctx = e.ctx;
     ctx.save();
 
     ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
@@ -222,7 +224,8 @@ class Circle extends Displayable {
     }
   }
 
-  draw(ctx) {
+  ondraw(e) {
+    const ctx = e.ctx;
     ctx.save();
 
     ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
@@ -257,9 +260,9 @@ class Line extends Displayable {
 
   }
 
-  draw(ctx) {
+  ondraw(e) {
     let correct = 0.5;
-
+    const ctx = e.ctx;
     ctx.save();
     ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
 

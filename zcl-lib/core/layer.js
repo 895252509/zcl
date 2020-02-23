@@ -12,14 +12,14 @@ class ZcLayers extends Eventable{
    } ){
     super();
 
-    this._usermulitdom = usemulitdom || true;
-    this._layered = layered || true;
+    this._usermulitdom = usemulitdom;
+    this._layered = layered;
 
     // 原始的画布
     this._cvs = null; // zcl.cvs;
 
     // 层管理数组
-    this._layers = [];
+    this._layers = new Map();
 
     // 每次缩放的缩放比率
     this._scaleRate = 0.02;
@@ -32,6 +32,8 @@ class ZcLayers extends Eventable{
     // 上一次鼠标位置
     this._preoffsetX = 0;
     this._preoffsetY = 0;
+
+    this._layersNo = 0;
 
     this._init(str);
 
@@ -94,20 +96,17 @@ class ZcLayers extends Eventable{
 */
   }
 
-  add(m){
-    if(! m instanceof Displayable ) return;
-    this._layers[0].addChild(m);
+  onbeforeframe(e){
+    this.childen.sort((a,b)=> a.zIndex - b.zIndex);
   }
 
-  show(){
-    this._ctx.clearRect(0, 0, this.width, this.width);
+  add(m){
+    if(! m instanceof Displayable ) return;
+    this._layers.get('main').addChild(m);
+  }
 
-    for (const lay of this._layers) {
-      lay.show();
-      if( !this._usermulitdom ){
-        this._ctx.drawImage(lay.dom, 0, 0);
-      }
-    }
+  onshow(e){
+    this._ctx.clearRect(0, 0, this.width, this.width);
   }
 
   /**
@@ -115,9 +114,9 @@ class ZcLayers extends Eventable{
    * 创建一个画布，并且添加到子对象
    * 
    */
-  _createLayer(zindex){
+  _createLayer(zindex, name){
     // 创建一个层对象，设置宽高
-    const lay = new ZcLayer(zindex);
+    const lay = new ZcLayer(zindex, name);
     this.addChild(lay);
 
     lay.width = this.width;
@@ -135,21 +134,10 @@ class ZcLayers extends Eventable{
     if( zIndex >= 1000 ) zIndex = 999;
     laydom.style.zIndex = zIndex;
 
-    // 在添加到数组的时候就排好顺序。
-    const ll = this._layers.length;
-    for (let index = 0; index < ll; index++) {
-      const el = this._layers[index];
-      if( zindex < el._zindex ){
-        this._layers.splice(index, 0, lay);
-        break;
-      }
-    }
-    if( this._layers.length === ll ){
-      this._layers.push(lay);
-    }
+    this._layers.set(name || this.layersNo.toString(), lay);
 
     // 如果使用dom分层的话，就把该层dom添加到container中
-    if( this._usermulitdom ){
+    if( this._usermulitdom || this.container.children.length === 0){
       laydom.style.position = "absolute";
       laydom.style.top = '0';
       laydom.style.left = '0';
@@ -165,8 +153,9 @@ class ZcLayers extends Eventable{
     return lay;
   }
 
-  create(zindex){
-    const lay = this._createLayer(zindex);
+  create(zindex, name){
+    if( !this._layered ) return null;
+    const lay = this._createLayer(zindex, name);
     lay._useCreated = true;
     return lay;
   }
@@ -195,8 +184,7 @@ class ZcLayers extends Eventable{
         }
       }
     }
-    if( this._cvs.style.cursor != "pointer" )
-      this._cvs.style.cursor = "auto";
+    this._cvs.style.cursor = "auto";
     this._hover = null;
 
     // 拖动画布操作处理
@@ -204,7 +192,6 @@ class ZcLayers extends Eventable{
       const p = new S.point(_movedX, _movedY);
       if( p._x !== 0 || p._y !== 0 ){
         this._transformTo.translate(p._x, p._y);
-        this._cvs.style.cursor = "pointer";
         this.trigger("transform", this._transformTo);
       }
     }
@@ -226,7 +213,7 @@ class ZcLayers extends Eventable{
     }else{
       // 如果给定的dom不是一个canvas，通常是一个div容器，那么就创建一个画布dom添加进去
       this.container = tdom;
-      const firstLayer = this._createLayer();
+      const firstLayer = this._createLayer(0,"main");
       // 把这个画布放在最上面，用来接收dom消息
       firstLayer.zIndex = 1000;
       firstLayer.width = tdom.clientWidth;
@@ -234,6 +221,7 @@ class ZcLayers extends Eventable{
       this._cvs = firstLayer.dom;
       this._ctx = firstLayer.ctx;
     }
+    this._createLayer(-1, "background");
 
     this._dispatchEvent();
   }
@@ -273,6 +261,10 @@ class ZcLayers extends Eventable{
       e._movedX = e.offsetX - this._preoffsetX;
       e._movedY = e.offsetY - this._preoffsetY;
     }
+
+    e.ctx = this._ctx;
+    e.usemulitdom = this._usermulitdom;
+    e.layered = this._layered;
     return this;
   }
 
@@ -315,7 +307,6 @@ class ZcLayers extends Eventable{
    */
   onmouseleftup(e){
     this._isclick = false;
-    this._cvs.style.cursor = "auto";
   }
 
   /**
@@ -326,7 +317,6 @@ class ZcLayers extends Eventable{
     this._preoffsetX = 0;
     this._preoffsetY = 0;
     this._isclick = false;
-    this._cvs.style.cursor = "auto";
   }
 
   /**
@@ -389,6 +379,10 @@ class ZcLayers extends Eventable{
     }
   }
 
+  get layersNo(){
+    return ++this._layersNo;
+  }
+
   /**
    * 获取原始画布的高度
    * @getter
@@ -414,8 +408,10 @@ class ZcLayers extends Eventable{
 }
 
 class ZcLayer extends Eventable{
-  constructor( zindex ) {
+  constructor( zindex, name ) {
     super();
+
+    this.name = name;
 
     this._dom = document.createElement("canvas");
 
@@ -434,20 +430,14 @@ class ZcLayer extends Eventable{
 
   }
 
-  show(){
+  onshow(e){
     if( !this._needupdate ) return;
     this._needupdate = false;
-
     this.clear();
-    if( this.draw ) this.draw.call(this);
-    
-    if( this._useCreated ) return;
     this._needupdate = true;
-
-    for (const m of this.childen) {
-      if ((m instanceof Displayable) && (m.draw)) {
-        m.draw(this.ctx);
-      }
+    this.trigger('draw', { ctx: e.ctx });
+    if( !e.usemulitdom && e.ctx !== this.ctx){
+      e.ctx.drawImage(this.dom, 0, 0);
     }
   }
 
@@ -469,6 +459,10 @@ class ZcLayer extends Eventable{
       pos._y,
       size._x,
       size._y);
+  }
+
+  additionEvent(e){
+    e.ctx = this.ctx;
   }
 
   get dom(){
