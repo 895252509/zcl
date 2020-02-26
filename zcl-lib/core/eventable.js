@@ -22,17 +22,15 @@
  * 
  */
 class Eventable {
+  static ZCLEventData = '<<ZCLEventData>>';
   constructor() {
-
     // 存放注册的事件
     this.evt_handlers = [];
-
-    this.iseventabled = true;
 
     /**
      * 子节点对象数组
      */
-    this.childen = [];
+    this.children = [];
 
     /**
      * 父对象
@@ -55,7 +53,7 @@ class Eventable {
         throw new Error(`${typeof child} 父元素已存在`);  
       } else{
         child.parent = this;
-        this.childen.push(child);
+        this.children.push(child);
         return this;
       }
     }else{
@@ -69,10 +67,10 @@ class Eventable {
    * @returns {Eventable} this
    */
   deleteChild(child){
-    let indexs = this.childen.findIndex((v)=>{
+    let indexs = this.children.findIndex((v)=>{
       if( v === child ) return true;
     });
-    this.childen.shift(indexs[0],1);
+    this.children.shift(indexs[0],1);
     child.parent = null;
     return this;
   }
@@ -101,6 +99,8 @@ class Eventable {
    * @returns {Eventable} this
    */
   trigger(eventtype, e) {
+    // 存放事件在对象之间传递时携带的数据
+    if( typeof e[Eventable.ZCLEventData] === 'undefined') e[Eventable.ZCLEventData] = {};
 
     // 外部触发事件时，如果该对象阻止事件触发，则不触发事件
     if( !this.allowTrigger(eventtype, e) ) return;
@@ -132,10 +132,10 @@ class Eventable {
     }
 
     // 在分发给子对象前对事件对象进行加工
-    this.additionEvent(e);
+    // this.additionEvent(e);
 
     // dispatchEvent
-    for( const child of this.childen ){
+    for( const child of this.children ){
       child.trigger(eventtype, e);
     }
 
@@ -192,8 +192,8 @@ class Eventable {
    * @interface
    * @param {Event} e
    * @returns {Eventable} this
-   */
+
   additionEvent(e){
     return this;
-  }
+  }   */
 }

@@ -10,6 +10,7 @@
  * 1. mouseout 现在还不能正常触发。（一点都不行！！） OK
  */
 class Displayable extends Eventable {
+  static CTX = "<<CanvasContext>>";
   constructor() {
     super();
 
@@ -122,6 +123,10 @@ class Displayable extends Eventable {
   set clicking(v){
     this._clicking = v;
   }
+
+  get ctx(){
+    return this[Displayable.CTX] || null;
+  }
 }
 
 class Polygon extends Displayable {
@@ -150,7 +155,7 @@ class Polygon extends Displayable {
 
   ondraw(e) {
     let correct = 0.5;
-    const ctx = e.ctx;
+    const ctx = this.ctx;
     ctx.save();
     ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
 
@@ -189,7 +194,7 @@ class Rectangle extends Displayable {
   }
 
   ondraw(e) {
-    const ctx = e.ctx;
+    const ctx = this.ctx;
     ctx.save();
 
     ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
@@ -225,7 +230,7 @@ class Circle extends Displayable {
   }
 
   ondraw(e) {
-    const ctx = e.ctx;
+    const ctx = this.ctx;
     ctx.save();
 
     ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
@@ -262,7 +267,7 @@ class Line extends Displayable {
 
   ondraw(e) {
     let correct = 0.5;
-    const ctx = e.ctx;
+    const ctx = this.ctx;
     ctx.save();
     ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
 

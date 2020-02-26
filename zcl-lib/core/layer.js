@@ -97,7 +97,7 @@ class ZcLayers extends Eventable{
   }
 
   onbeforeframe(e){
-    this.childen.sort((a,b)=> a.zIndex - b.zIndex);
+    this.children.sort((a,b)=> a.zIndex - b.zIndex);
   }
 
   add(m){
@@ -175,8 +175,8 @@ class ZcLayers extends Eventable{
 
     // 判断是否划过对象，并设置鼠标样式
     let cp = new Shapes.point(_worldX, _worldY);
-    for (const lay of this.childen) {
-      for (const m of lay.childen) {
+    for (const lay of this.children) {
+      for (const m of lay.children) {
         if( m.contain(cp) ){
           this._cvs.style.cursor = "pointer";
           this._hover = m;
@@ -252,19 +252,7 @@ class ZcLayers extends Eventable{
    * @returns {Zcl} this 
    */
   additionEvent(e){
-    // 如果是鼠标事件
-    if( e instanceof MouseEvent ){
-      let p = new S.point(e.offsetX, e.offsetY);
-      p.dotMatrix(this._transformTo.invert());
-      e._worldX = p._x;
-      e._worldY = p._y;
-      e._movedX = e.offsetX - this._preoffsetX;
-      e._movedY = e.offsetY - this._preoffsetY;
-    }
 
-    e.ctx = this._ctx;
-    e.usemulitdom = this._usermulitdom;
-    e.layered = this._layered;
     return this;
   }
 
@@ -379,6 +367,32 @@ class ZcLayers extends Eventable{
     }
   }
 
+  /**
+   * 在这里给事件对象添加了一些属性
+   * @param {string} eventtype
+   * @param {Event} e 
+   * @returns {boolean} true
+   */
+  allowTrigger(eventtype, e){
+    // 如果是鼠标事件
+    if( e instanceof MouseEvent ){
+      // 变换鼠标坐标到画布世界坐标
+      let p = new S.point(e.offsetX, e.offsetY);
+      p.dotMatrix(this._transformTo.invert());
+      // 添加转换后的坐标属性
+      e._worldX = p._x;
+      e._worldY = p._y;
+      // 添加鼠标相对于上次移动的距离（浏览器坐标）
+      e._movedX = e.offsetX - this._preoffsetX;
+      e._movedY = e.offsetY - this._preoffsetY;
+    }
+
+    e[Eventable.ZCLEventData].ctx = this._ctx;
+    e[Eventable.ZCLEventData].usemulitdom = this._usermulitdom;
+    e[Eventable.ZCLEventData].layered = this._layered;
+    return true;
+  }
+
   get layersNo(){
     return ++this._layersNo;
   }
@@ -431,13 +445,18 @@ class ZcLayer extends Eventable{
   }
 
   onshow(e){
+    const ctx = e[Eventable.ZCLEventData].ctx;
     if( !this._needupdate ) return;
     this._needupdate = false;
     this.clear();
     this._needupdate = true;
-    this.trigger('draw', { ctx: e.ctx });
-    if( !e.usemulitdom && e.ctx !== this.ctx){
-      e.ctx.drawImage(this.dom, 0, 0);
+    if( this.children.length === 0 ) return;
+    for (const m of this.children) {
+      m[Displayable.CTX] = this._ctx;
+      m.trigger('draw', e);
+    }
+    if( !e[Eventable.ZCLEventData].usemulitdom && ctx !== this.ctx){
+      ctx.drawImage(this.dom, 0, 0);
     }
   }
 
@@ -461,9 +480,9 @@ class ZcLayer extends Eventable{
       size._y);
   }
 
-  additionEvent(e){
-    e.ctx = this.ctx;
-  }
+  // additionEvent(e){
+  //   e.ctx = this.ctx;
+  // }
 
   get dom(){
     return this._dom;
