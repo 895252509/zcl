@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+function Eventable(){
+  this.eventhandle = {};
+  this.bindEvent();
+}
+Eventable.prototype = {
+  on(eventnane, handle){
+    if( typeof this.eventhandle[eventnane] === 'undefined' ){
+      this.eventhandle[eventnane] = [];
+    }
+    this.eventhandle[eventnane].push(handle);
+  },
+  bindEvent(){
+    Object.getOwnPropertyNames(this.__proto__)
+    .filter( v => v.startsWith("on") && v !== "on" )
+    .map( v => {
+      this.on( v ,this[v] );
+    })
+  },
+  onclick(e){
+    console.log("on click")
+  }
+}
+Object.prototype["[[USE]]"] = {};
+Object.prototype.use = function (require, used) {
+  function check(that,req) {
+
+  }
+  function use(that, u) {
+    Object.getOwnPropertyNames(u.prototype)
+    .filter( v => true)
+    .map(v=>{
+      Object.defineProperty(that.__proto__, v, Object.getOwnPropertyDescriptor(u.prototype, v));
+    });
+    u.call(that);
+  }
+  if( arguments.length === 1 ){
+    use(this, require);
+  }else if( arguments.length === 2){
+    check(this, require);
+    use(this, used);
+  }
+}
+
+function A(){
+  this.use(Eventable);
+}
+A.prototype = {
+
+}
+
+const a = new A();
+
+
+</script>
+</html>
