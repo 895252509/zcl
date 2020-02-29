@@ -36,64 +36,6 @@ class ZcLayers extends Eventable{
     this._layersNo = 0;
 
     this._init(str);
-
-    //this._createLayer();
-
-    //this._background = this.create(-1);
-/*
-    this._background.draw = function(color = 'rgba(40, 120, 255, 1)'){
-      var icvs = this.ctx;
-
-      icvs.save();
-      icvs.fillStyle = color;
-
-      // 计算应该清除的范围
-      const size = new S.point(this.width, this.height);
-      const pos = new S.point(0, 0);
-      pos.dotMatrix(this._transformTo.invert());
-      size.dotMatrix(this._transformTo.scaleM.invert());
-      icvs.fillRect(
-        pos._x,
-        pos._y,
-        size._x,
-        size._y);
-
-      icvs.strokeStyle = "rgba(255, 255, 255, 1)";
-      icvs.lineWidth = 0.8;
-      icvs.setLineDash([6, 2, 6, 2]);
-      icvs.lineDashOffset = 2;
-
-      var pixSizeX = 25;
-      var pixSizeY = 25;
-      var numberX = this.height / pixSizeX;
-      var numberY = this.width / pixSizeY;
-
-      for (var i = 0; i <= numberX; i++) {
-        if (i % 4 == 0)
-          icvs.strokeStyle = "rgba(255, 255, 255, 0.9)";
-        else
-          icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
-        icvs.beginPath();
-        icvs.moveTo(0 + 0.5, i * pixSizeX + 0.5);
-        icvs.lineTo(this.width + 0.5, i * pixSizeX + 0.5);
-        icvs.stroke();
-      }
-
-      for (var i = 0; i <= numberY; i++) {
-        if (i % 4 == 0)
-          icvs.strokeStyle = "rgba(255, 255, 255, 0.6)";
-        else
-          icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
-
-        icvs.beginPath();
-        icvs.moveTo(i * pixSizeY + 0.5, 0);
-        icvs.lineTo(i * pixSizeY + 0.5, this.height + 0.5);
-        icvs.stroke();
-      }
-
-      icvs.restore();
-    }
-*/
   }
 
   onbeforeframe(e){
@@ -139,8 +81,8 @@ class ZcLayers extends Eventable{
     // 如果使用dom分层的话，就把该层dom添加到container中
     if( this._usermulitdom || this.container.children.length === 0){
       laydom.style.position = "absolute";
-      laydom.style.top = '0';
-      laydom.style.left = '0';
+      // laydom.style.top = '0';
+      // laydom.style.left = '0';
       laydom.style.padding = '0';
       laydom.style.margin = '0';
       this.container.appendChild(laydom);
@@ -165,16 +107,8 @@ class ZcLayers extends Eventable{
    * @param {Event} e 
    */
   onmousemove(e){
-    // 计算坐标变换
-    let p = new S.point(e.offsetX, e.offsetY);
-    p.dotMatrix(this._transformTo.invert());
-    const _worldX = p._x;
-    const _worldY = p._y;
-    const _movedX = e.offsetX - this._preoffsetX;
-    const _movedY = e.offsetY - this._preoffsetY;
-
     // 判断是否划过对象，并设置鼠标样式
-    let cp = new Shapes.point(_worldX, _worldY);
+    let cp = new Shapes.point(e._worldX, e._worldY);
     for (const lay of this.children) {
       for (const m of lay.children) {
         if( m.contain(cp) ){
@@ -189,7 +123,7 @@ class ZcLayers extends Eventable{
 
     // 拖动画布操作处理
     if( this._isclick ){
-      const p = new S.point(_movedX, _movedY);
+      const p = new S.point(e._movedX, e._movedY);
       if( p._x !== 0 || p._y !== 0 ){
         this._transformTo.translate(p._x, p._y);
         this.trigger("transform", this._transformTo);
@@ -221,7 +155,6 @@ class ZcLayers extends Eventable{
       this._cvs = firstLayer.dom;
       this._ctx = firstLayer.ctx;
     }
-    this._createLayer(-1, "background");
 
     this._dispatchEvent();
   }
@@ -242,18 +175,6 @@ class ZcLayers extends Eventable{
 
       });
     }
-  }
-  
-  /**
-   * 处理事件对象
-   * 1. 给事件对象添加转换到画布坐标的鼠标活动坐标
-   * @override
-   * @param {Event} e
-   * @returns {Zcl} this 
-   */
-  additionEvent(e){
-
-    return this;
   }
 
   /**
@@ -386,11 +307,15 @@ class ZcLayers extends Eventable{
       e._movedX = e.offsetX - this._preoffsetX;
       e._movedY = e.offsetY - this._preoffsetY;
     }
-
-    e[Eventable.ZCLEventData].ctx = this._ctx;
-    e[Eventable.ZCLEventData].usemulitdom = this._usermulitdom;
-    e[Eventable.ZCLEventData].layered = this._layered;
+    if( typeof e.data === 'undefined' ) e.data = {};
+    e.data.ctx = this._ctx;
+    e.data.usemulitdom = this._usermulitdom;
+    e.data.layered = this._layered;
     return true;
+  }
+
+  sort(func){
+
   }
 
   get layersNo(){
@@ -445,7 +370,7 @@ class ZcLayer extends Eventable{
   }
 
   onshow(e){
-    const ctx = e[Eventable.ZCLEventData].ctx;
+    const ctx = e.data.ctx;
     if( !this._needupdate ) return;
     this._needupdate = false;
     this.clear();
@@ -455,7 +380,7 @@ class ZcLayer extends Eventable{
       m[Displayable.CTX] = this._ctx;
       m.trigger('draw', e);
     }
-    if( !e[Eventable.ZCLEventData].usemulitdom && ctx !== this.ctx){
+    if( !e.data.usemulitdom && ctx !== this.ctx){
       ctx.drawImage(this.dom, 0, 0);
     }
   }
@@ -479,10 +404,6 @@ class ZcLayer extends Eventable{
       size._x,
       size._y);
   }
-
-  // additionEvent(e){
-  //   e.ctx = this.ctx;
-  // }
 
   get dom(){
     return this._dom;

@@ -27,15 +27,12 @@ class Zcl extends Eventable {
     // 是否启用分层
     this._layered = true;
     // 通过为每一层分别创建画布dom，设置绝对定位重叠来实现分层
-    this._layer_usemulitdom = false;
-
-    // this._initContainer(params);
+    this._layer_usemulitdom = true;
 
     this.layerManager = new ZcLayers(params,{
       usemulitdom: this._layer_usemulitdom,
       layered: this._layered
     });
-    this.addChild( this.layerManager );
 
     // 初始化操作
     this.init();

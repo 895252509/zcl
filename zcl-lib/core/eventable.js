@@ -22,7 +22,6 @@
  * 
  */
 class Eventable {
-  static ZCLEventData = '<<ZCLEventData>>';
   constructor() {
     // 存放注册的事件
     this.evt_handlers = [];
@@ -99,8 +98,6 @@ class Eventable {
    * @returns {Eventable} this
    */
   trigger(eventtype, e) {
-    // 存放事件在对象之间传递时携带的数据
-    if( typeof e[Eventable.ZCLEventData] === 'undefined') e[Eventable.ZCLEventData] = {};
 
     // 外部触发事件时，如果该对象阻止事件触发，则不触发事件
     if( !this.allowTrigger(eventtype, e) ) return;
@@ -130,9 +127,6 @@ class Eventable {
         }
       }
     }
-
-    // 在分发给子对象前对事件对象进行加工
-    // this.additionEvent(e);
 
     // dispatchEvent
     for( const child of this.children ){
@@ -187,13 +181,4 @@ class Eventable {
     return true;
   }
 
-  /**
-   * 对事件对象进行封装处理
-   * @interface
-   * @param {Event} e
-   * @returns {Eventable} this
-
-  additionEvent(e){
-    return this;
-  }   */
 }

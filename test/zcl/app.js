@@ -25,6 +25,61 @@ zcl.add(l3);
 // 开始渲染
 zcl.start();
 
+zcl.layerManager.create( -1, "background" ).on( 'show', function(e){
+  var icvs = this._ctx;
+
+  icvs.save();
+  icvs.fillStyle = 'rgba(40, 120, 255, 1)';
+
+  // 计算应该清除的范围
+  const size = new S.point(this.width, this.height);
+  const pos = new S.point(0, 0);
+  pos.dotMatrix(this._transformTo.invert());
+  size.dotMatrix(this._transformTo.scaleM.invert());
+  icvs.fillRect(
+    pos._x,
+    pos._y,
+    size._x,
+    size._y);
+
+  icvs.strokeStyle = "rgba(255, 255, 255, 1)";
+  icvs.lineWidth = 0.8;
+  icvs.setLineDash([6, 2, 6, 2]);
+  icvs.lineDashOffset = 2;
+
+  var pixSizeX = 25;
+  var pixSizeY = 25;
+  var numberX = this.height / pixSizeX;
+  var numberY = this.width / pixSizeY;
+
+  for (var i = 0; i <= numberX; i++) {
+    if (i % 4 == 0)
+      icvs.strokeStyle = "rgba(255, 255, 255, 0.9)";
+    else
+      icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
+    icvs.beginPath();
+    icvs.moveTo(0 + 0.5, i * pixSizeX + 0.5);
+    icvs.lineTo(this.width + 0.5, i * pixSizeX + 0.5);
+    icvs.stroke();
+  }
+
+  for (var i = 0; i <= numberY; i++) {
+    if (i % 4 == 0)
+      icvs.strokeStyle = "rgba(255, 255, 255, 0.6)";
+    else
+      icvs.strokeStyle = "rgba(255, 255, 255, 0.4)";
+
+    icvs.beginPath();
+    icvs.moveTo(i * pixSizeY + 0.5, 0);
+    icvs.lineTo(i * pixSizeY + 0.5, this.height + 0.5);
+    icvs.stroke();
+  }
+
+  icvs.restore();
+});
+
+
+
 zcl.on("click", function (e) {
   console.log(`*** zcl click pos:${e.type}:${e.offsetX},${e.offsetY} ***`);
 });
