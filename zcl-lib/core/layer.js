@@ -38,10 +38,11 @@ class ZcLayers extends Eventable{
     this._init(str);
   }
 
-  onbeforeframe(e){
-    this.children.sort((a,b)=> a.zIndex - b.zIndex);
-  }
-
+  /**
+   * 把一个对象添加到层里，应该根据对象的属性，动态的
+   * 添加到不同的层，从而降低重绘的次数提高性能
+   * @param {Displayable} m 
+   */
   add(m){
     if(! m instanceof Displayable ) return;
     this._layers.get('main').addChild(m);
@@ -57,14 +58,18 @@ class ZcLayers extends Eventable{
    * 
    */
   _createLayer(zindex, name){
+    const lname = name || this.layersNo.toString();
+    if( this._layers.has( lname ) ) throw new Error( "layer name 重复" );
+
     // 创建一个层对象，设置宽高
     const lay = new ZcLayer(zindex, name);
+    // 添加到事件子对象，接收事件
     this.addChild(lay);
-
+    // 添加到map方便以名字获取
+    this._layers.set(lname, lay);
+    // 设置宽高
     lay.width = this.width;
     lay.height = this.height;
-
-    const laydom = lay.dom;
 
     // 设置新建层的zindex，限定其不能大于1000，因为1000在最上面用来接收dom事件
     let zIndex;
@@ -74,15 +79,14 @@ class ZcLayers extends Eventable{
       zIndex = zindex;
     }
     if( zIndex >= 1000 ) zIndex = 999;
-    laydom.style.zIndex = zIndex;
-
-    this._layers.set(name || this.layersNo.toString(), lay);
-
+    lay.zIndex = zIndex;
+    // 根据zindex进行排序
+    this.sortAszIndex();
+    
+    const laydom = lay.dom;
     // 如果使用dom分层的话，就把该层dom添加到container中
     if( this._usermulitdom || this.container.children.length === 0){
       laydom.style.position = "absolute";
-      // laydom.style.top = '0';
-      // laydom.style.left = '0';
       laydom.style.padding = '0';
       laydom.style.margin = '0';
       this.container.appendChild(laydom);
@@ -95,6 +99,11 @@ class ZcLayers extends Eventable{
     return lay;
   }
 
+  /**
+   * 创建一层
+   * @param {number} zindex 
+   * @param {string} name
+   */
   create(zindex, name){
     if( !this._layered ) return null;
     const lay = this._createLayer(zindex, name);
@@ -133,6 +142,10 @@ class ZcLayers extends Eventable{
     this._preoffsetY = e.offsetY;
   }
 
+  /**
+   * 初始化dom
+   * @param {string} domid 
+   */
   _init(dom){
     if( typeof dom !== 'string' && !(dom instanceof HTMLElement)){
       throw new Error('init error');
@@ -314,10 +327,25 @@ class ZcLayers extends Eventable{
     return true;
   }
 
+  /**
+   * 对事件子对象进行排序，控制事件触发的顺序
+   * @param {function} func 
+   */
   sort(func){
-
+    this.children.sort( func )
   }
 
+  /**
+   * 按zIndex倒序
+   */
+  sortAszIndex(){
+    this.sort( (v1 , v2) => v2.zIndex - v1.zIndex );
+  }
+
+  /**
+   * 获得一个自增的层id
+   * @getter
+   */
   get layersNo(){
     return ++this._layersNo;
   }

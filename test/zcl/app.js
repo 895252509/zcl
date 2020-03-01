@@ -1,6 +1,15 @@
-let zcl = new Zcl("#container");
+let zcl = new Zcl("#container").start();
 
-let re = new Rectangle(new Shapes.point(300, 20), new Shapes.point(100, 100));
+let re1 = new Rectangle({
+  p1 : new Shapes.point(300, 20),
+  p2 : new Shapes.point(100, 100),
+  bgcolor : "blue"
+});
+let re = new Rectangle({
+  p1 : new Shapes.point(300, 20),
+  p2 : new Shapes.point(120, 120),
+  bgcolor : "red"
+});
 re.on("click", function(e) {
   console.log(`re click:${e.type}:${e.offsetX},${e.offsetY}`);
 })
@@ -8,6 +17,7 @@ re.on("mouseout", (e) => {
   console.log(`re mouseout:${e.type}:${e.offsetX},${e.offsetY}`);
 });
 zcl.add(re);
+zcl.add(re1);
 
 let c = new Circle(new Shapes.point(100, 300), 100);
 c.on("click", (e) => {
@@ -21,11 +31,7 @@ l3.on("mouseout", function(e){
 })
 zcl.add(l3);
 
-
-// 开始渲染
-zcl.start();
-
-zcl.layerManager.create( -1, "background" ).on( 'show', function(e){
+zcl.layerManager.create( -1, "background" ).on('show', function(e){
   var icvs = this._ctx;
 
   icvs.save();
@@ -77,8 +83,6 @@ zcl.layerManager.create( -1, "background" ).on( 'show', function(e){
 
   icvs.restore();
 });
-
-
 
 zcl.on("click", function (e) {
   console.log(`*** zcl click pos:${e.type}:${e.offsetX},${e.offsetY} ***`);

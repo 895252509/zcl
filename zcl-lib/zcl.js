@@ -55,6 +55,7 @@ class Zcl extends Eventable {
     this.timing.firstframetime =  this._getTime;
     this.timing.framestartmillisecond = this.timing.firstframetime;
     this.frame();
+    return this;
   }
 
   frame() {

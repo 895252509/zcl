@@ -180,7 +180,11 @@ class Polygon extends Displayable {
 
 
 class Rectangle extends Displayable {
-  constructor(p1 = new Shapes.point(), p2 = new Shapes.point()) {
+  constructor({
+    p1 = new Shapes.point(), 
+    p2 = new Shapes.point(),
+    bgcolor = "red"
+  }) {
     super();
 
     if( p1 instanceof Shapes.rectangle ){
@@ -188,7 +192,7 @@ class Rectangle extends Displayable {
     }else{
       this._src = new Shapes.rectangle( p1, p2 );
     }
-
+    this.bgcolor = bgcolor;
     this.figure;
     this.style;
   }
@@ -197,7 +201,7 @@ class Rectangle extends Displayable {
     const ctx = this.ctx;
     ctx.save();
 
-    ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
+    ctx.fillStyle = this.bgcolor;//'rgba(255, 0, 0, 0.8)';
 
     ctx.fillRect(
       this._src._p1._x,
