@@ -49,16 +49,16 @@ class Eventable {
    * @param {Eventable} child 
    * @returns {Eventable} this
    */
-  addChild(child){
-    if( child instanceof Eventable ){
-      if( child.parent instanceof Eventable ){
-        throw new Error(`${typeof child} 父元素已存在`);  
-      } else{
+  addChild(child) {
+    if (child instanceof Eventable) {
+      if (child.parent instanceof Eventable) {
+        throw new Error(`${typeof child} 父元素已存在`);
+      } else {
         child.parent = this;
         this.childen.push(child);
         return this;
       }
-    }else{
+    } else {
       throw new Error(`${typeof child} 不是Eventable的子类。`);
     }
   }
@@ -68,11 +68,11 @@ class Eventable {
    * @param {Eventable} child 
    * @returns {Eventable} this
    */
-  deleteChild(child){
-    let indexs = this.childen.findIndex((v)=>{
-      if( v === child ) return true;
+  deleteChild(child) {
+    let indexs = this.childen.findIndex((v) => {
+      if (v === child) return true;
     });
-    this.childen.shift(indexs[0],1);
+    this.childen.shift(indexs[0], 1);
     child.parent = null;
     return this;
   }
@@ -103,7 +103,7 @@ class Eventable {
   trigger(eventtype, e) {
 
     // 外部触发事件时，如果该对象阻止事件触发，则不触发事件
-    if( !this.allowTrigger(eventtype, e) ) return;
+    if (!this.allowTrigger(eventtype, e)) return;
 
     if (this.evt_handlers[eventtype] && this.evt_handlers[eventtype].length !== 0) {
       for (let i = 0, size = this.evt_handlers[eventtype].length; i < size; i++) {
@@ -120,7 +120,7 @@ class Eventable {
     if (this.evt_handlers[`${eventtype}$asyn`] && this.evt_handlers[`${eventtype}$asyn`].length !== 0) {
       for (let i = 0, size = this.evt_handlers[`${eventtype}$asyn`].length; i < size; i++) {
         let hand = this.evt_handlers[`${eventtype}$asyn`][i];
-        window.setTimeout(()=>{
+        window.setTimeout(() => {
           hand.handler.call(this, e);
         }, 0);
         if (hand.isOnce) {
@@ -135,7 +135,7 @@ class Eventable {
     this.additionEvent(e);
 
     // dispatchEvent
-    for( const child of this.childen ){
+    for (const child of this.childen) {
       child.trigger(eventtype, e);
     }
 
@@ -165,13 +165,13 @@ class Eventable {
    */
   _bindEvent() {
     let proto = this.__proto__;
-    while( typeof proto !== 'undefined' && proto !== null){
+    while (typeof proto !== 'undefined' && proto !== null) {
       Object.getOwnPropertyNames(proto)
-      .filter( v => v.startsWith('on') && v !== 'on' && v !== 'once' )
-      .filter( v => typeof this[v] === 'function' )
-      .map( v => {
-        this.on(v.substring(2), this[v].bind(this));
-      });
+        .filter(v => v.startsWith('on') && v !== 'on' && v !== 'once')
+        .filter(v => typeof this[v] === 'function')
+        .map(v => {
+          this.on(v.substring(2), this[v].bind(this));
+        });
       proto = proto.__proto__;
     }
   }
@@ -183,7 +183,7 @@ class Eventable {
    * @param {Event} e 
    * @returns {Boolean}
    */
-  allowTrigger(eventtype, e){
+  allowTrigger(eventtype, e) {
     return true;
   }
 
@@ -193,7 +193,7 @@ class Eventable {
    * @param {Event} e
    * @returns {Eventable} this
    */
-  additionEvent(e){
+  additionEvent(e) {
     return this;
   }
 }
