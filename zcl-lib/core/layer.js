@@ -5,7 +5,7 @@
  * 实现分层绘制，提高绘制效率等
  * 
  */
-class ZcLayers extends Eventable{
+class ZcLayers extends ZclNode{
   constructor( str, { 
     usemulitdom,
     layered
@@ -374,7 +374,7 @@ class ZcLayers extends Eventable{
 
 }
 
-class ZcLayer extends Eventable{
+class ZcLayer extends ZclNode{
   constructor( zindex, name ) {
     super();
 

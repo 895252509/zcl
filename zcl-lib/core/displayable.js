@@ -9,7 +9,7 @@
  * BUGS:
  * 1. mouseout 现在还不能正常触发。（一点都不行！！） OK
  */
-class Displayable extends Eventable {
+class Displayable extends ZclNode {
   static CTX = "<<CanvasContext>>";
   constructor() {
     super();

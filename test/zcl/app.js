@@ -5,17 +5,22 @@ let re1 = new Rectangle({
   p2 : new Shapes.point(100, 100),
   bgcolor : "blue"
 });
+
 let re = new Rectangle({
   p1 : new Shapes.point(300, 20),
   p2 : new Shapes.point(120, 120),
   bgcolor : "red"
 });
+
+
+
 re.on("click", function(e) {
   console.log(`re click:${e.type}:${e.offsetX},${e.offsetY}`);
 })
 re.on("mouseout", (e) => {
   console.log(`re mouseout:${e.type}:${e.offsetX},${e.offsetY}`);
 });
+
 zcl.add(re);
 zcl.add(re1);
 
@@ -35,7 +40,7 @@ zcl.layerManager.create( -1, "background" ).on('show', function(e){
   var icvs = this._ctx;
 
   icvs.save();
-  icvs.fillStyle = 'rgba(40, 120, 255, 1)';
+  icvs.fillStyle = 'rgba(35, 120, 120, 1)';
 
   // 计算应该清除的范围
   const size = new S.point(this.width, this.height);
@@ -90,9 +95,6 @@ zcl.on("click", function (e) {
 
 // 显示渲染信息
 zcl.on("timing$asyn", (e) => {
-  let date = new Date();
-  document.querySelector("#date").innerHTML =
-    `当前时间: ${date.getFullYear()}-${date.getMonth()+1}-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
   document.querySelectorAll("#fps")[0].innerHTML = `FPS:${e.timing.fps}`;
   document.querySelectorAll("#avemillisecond")[0].innerHTML = `平均毫秒数:${e.timing.avemillisecond}ms`;
 });

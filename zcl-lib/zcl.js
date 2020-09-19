@@ -1,5 +1,5 @@
 
-class Zcl extends Eventable {
+class Zcl extends ZclNode {
   constructor(params) {
     super();
 
@@ -102,7 +102,8 @@ class Zcl extends Eventable {
    * @returns {number} time
    */
   get _getTime(){
-    return window.performance?window.performance.timing.navigationStart + window.performance.now():new Date() .getTime();
+    return window.performance?window.performance
+    .timing.navigationStart + window.performance.now():new Date() .getTime();
   }
 
   /**
